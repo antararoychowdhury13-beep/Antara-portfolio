@@ -101,6 +101,7 @@ h2 em,h1 em{font-style:italic;font-weight:300;color:var(--accent)}
 .scroll-cue i{display:block;width:1px;height:34px;background:var(--ink2);position:relative;overflow:hidden}
 .scroll-cue i::after{content:"";position:absolute;inset:0;background:var(--accent);animation:drip 2.2s ease-in-out infinite}
 @keyframes drip{0%{transform:translateY(-100%)}55%{transform:translateY(0)}100%{transform:translateY(100%)}}
+@media(min-width:1061px){.hero-imgs{align-self:start}}
 /* ticker */
 .ticker{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);overflow:hidden;padding:15px 0;background:var(--bg)}
 .ticker-track{display:flex;gap:0;width:max-content;animation:tick 38s linear infinite}
