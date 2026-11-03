@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# Add "Sitemap: https://YOUR-DOMAIN/sitemap.xml" once the domain is set.

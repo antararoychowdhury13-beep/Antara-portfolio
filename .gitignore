@@ -1,0 +1,4 @@
+# Never publish the private Studio file or its saved content
+*Studio*.html
+*.studio.html
+.DS_Store
