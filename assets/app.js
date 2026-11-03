@@ -800,9 +800,9 @@ function exportCSV(name,rows){const c=rows.map(r=>r.map(x=>'"'+String(x??'').rep
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=name;a.click()}
 
 document.addEventListener('click',e=>{
- if(e.target.id==='modal'&&$('#modal .reel-lb')){closeModal();return}
+ if(e.target.id==='modal'){closeModal();return}
+ const close=e.target.closest('[data-close]');if(close){closeModal();return}
  const t=e.target.closest('[data-action]');if(!t)return;const a=t.dataset.action,id=t.dataset.id;
- if(t.hasAttribute('data-close')){closeModal();return}
  switch(a){
   case 'reel-open':{e.preventDefault();const scope=t.closest('#reel-grid,.reel-row');const seq=scope?[...scope.querySelectorAll('[data-action=reel-open]')].map(b=>b.dataset.code):[];openReel(t.dataset.code,seq);break}
   case 'story-open':storyClear();openStory(0);break;

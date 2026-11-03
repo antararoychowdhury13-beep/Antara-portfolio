@@ -699,9 +699,8 @@ tr.row-off td{opacity:.45}
 .rd-left.is-reel img{aspect-ratio:9/16;max-height:82svh;width:auto;max-width:100%;margin:0 auto;object-fit:cover}
 .rd-left.is-reel{text-align:center}
 .rcard .ph img[src^="data:"]{object-position:50% 78%}
-.lb-x{display:none;position:absolute;top:10px;right:10px;z-index:5;width:40px;height:40px;border-radius:50%;background:rgba(20,16,12,.7);color:#F1E9DD;font-size:15px}
+.lb-x{display:grid;place-items:center;position:absolute;top:10px;right:10px;z-index:5;width:40px;height:40px;border-radius:50%;background:rgba(20,16,12,.78);color:#F1E9DD;font-size:15px;border:1px solid rgba(255,255,255,.5);cursor:pointer}
 .reel-modal{position:relative}
-@media(max-width:760px){.lb-x{display:grid;place-items:center}}
 @media(max-width:1060px){.reel-row{grid-template-columns:repeat(3,1fr)}.reel-grid{grid-template-columns:repeat(3,1fr)}.proof{grid-template-columns:1fr 1fr}.proof>div:nth-child(2){border-right:none}.proof>div:nth-child(-n+2){border-bottom:1px solid var(--hair)}}
 @media(max-width:760px){.reel-lb{grid-template-columns:1fr;max-height:none}.lb-media{min-height:0;height:min(70svh,560px)}.lb-frame{min-height:0}.lb-info{max-height:none}.modal-box.reel-modal{max-height:92svh;overflow-y:auto}}
 @media(max-width:640px){.reel-row,.reel-grid{grid-template-columns:1fr 1fr;gap:10px}.reel-meta b{font-size:.92rem}.reel-search{flex-direction:column}.reel-search select{width:100%}.proof b{font-size:1.8rem}}
