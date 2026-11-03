@@ -227,7 +227,7 @@ document.addEventListener('keydown',e=>{if(e.key!=='Tab'||!trapEl)return;const f
  const first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}});
 function openModal(html,wide=false){const m=$('#modal');m.innerHTML=`<div class="modal-box ${wide?'wide':''}">${html}</div>`;m.classList.add('open');hrefFix(m);trapOn(m,reelReturn||document.activeElement);
  if(!m.contains(document.activeElement))setTimeout(()=>(m.querySelector('[data-close],[data-cok]')||m.querySelector(FOCUSABLE))?.focus(),40)}
-function closeModal(){const m=$('#modal');if(!m.classList.contains('open'))return;m.classList.remove('open');m.innerHTML='';m.removeAttribute('aria-label');reelReturn=null;trapOff(m)}
+function closeModal(){const m=$('#modal');if(!m.classList.contains('open'))return;if(typeof storyClear==='function')storyClear();m.classList.remove('open');m.innerHTML='';m.removeAttribute('aria-label');reelReturn=null;trapOff(m)}
 function confirmBox(title,msg,ok='Confirm',danger=false){return new Promise(res=>{
  openModal(`<h3>${esc(title)}</h3><p style="color:var(--ink2);font-size:.94rem">${esc(msg)}</p>
  <div class="m-actions"><button class="abtn" data-close>Cancel</button><button class="abtn ${danger?'danger':'pri'}" data-cok>${ok}</button></div>`);
@@ -296,7 +296,7 @@ function footerHTML(){const s=DB.settings;
  <div class="ftr-grid">
   <div><div class="ftr-sig">${esc(s.signature)}</div><p style="font-size:.88rem;max-width:36ch">Recipes, films and photographs from a home kitchen in Bangalore — rooted in Bengal, and the collaborations they have started.</p></div>
   <div><h4>Explore</h4><a class="fl" href="#/work">Work</a><a class="fl" href="#/recipes">Recipes</a><a class="fl" href="#/about">About</a><a class="fl" href="#/collaborate">Collaborate</a><a class="fl" href="#/reels">Reels</a></div>
-  <div><h4>Elsewhere</h4><a class="fl" href="${IGURL()}" target="_blank" rel="noopener">Instagram ${esc(s.instagram)} ↗</a>${s.email?`<a class="fl" href="mailto:${esc(s.email)}">${esc(s.email)}</a>`:''}<a class="fl" href="#/pantry">The Pantry · coming soon</a><a class="fl" href="#/academy">Kitchen Academy · coming soon</a></div>
+  <div><h4>Elsewhere</h4>${socialButtons()}<a class="fl" href="${IGURL()}" target="_blank" rel="noopener">Instagram ${esc(s.instagram)} ↗</a><a class="fl" href="${FBURL()}" target="_blank" rel="noopener">Facebook ↗</a><a class="fl" href="${YTURL()}" target="_blank" rel="noopener">YouTube @ArtisanAntara ↗</a>${s.email?`<a class="fl" href="mailto:${esc(s.email)}">${esc(s.email)}</a>`:''}<a class="fl" href="#/pantry">The Pantry · coming soon</a><a class="fl" href="#/academy">Kitchen Academy · coming soon</a></div>
   <div><h4>The Sunday Note</h4><p style="font-size:.85rem;margin-bottom:14px">One recipe, one story — occasionally.</p>
   <form class="nl-mini" data-form="newsletter" novalidate><label class="sr-only" for="nl-foot">Email address</label><input id="nl-foot" type="email" name="email" placeholder="your@email.com" autocomplete="email" required><button type="submit">Join</button></form>
   <p class="fineprint" style="margin-top:8px">By joining you agree to occasional emails. Unsubscribe anytime · <a href="#/privacy" style="text-decoration:underline">Privacy</a></p></div>
@@ -317,7 +317,7 @@ function secHero(s){const st=reelStats(),latest=visReels().slice().sort((a,b)=>b
  <h1><span class="lm"><span>${esc(s.h1a)}</span></span><span class="lm"><span><em>${esc(s.h1b)}</em></span></span></h1>
  <p class="sub" data-reveal>${esc(s.sub)}</p>
  <div class="hero-ctas" data-reveal><a class="btn solid" href="${esc(s.href1)}">${esc(s.cta1)} <span class="ar">→</span></a><a class="btn" href="${esc(s.href2)}">${esc(s.cta2)}</a></div>
- <ul class="hero-proof" data-reveal aria-label="At a glance">${PROFILE.verified?'<li><span class="vf" aria-hidden="true">✓</span>Verified creator</li>':''}<li><b>${fmtN(PROFILE.followers)}</b> followers</li><li><b>${fmtN(st.v)}</b> plays · latest ${st.n} reels</li><li><b>${brandsWithReels().length}</b> brand partners</li></ul></div>
+ <ul class="hero-proof" data-reveal aria-label="At a glance">${PROFILE.verified?'<li><span class="vf" aria-hidden="true">✓</span>Verified creator</li>':''}<li><b>${fmtN(PROFILE.followers)}</b> followers</li><li><b>${fmtN(st.v)}</b> plays · latest ${st.n} reels</li><li><b>${brandsWithReels().length}</b> brand partners</li></ul>${storyBar()}</div>
  <div class="hero-imgs"><figure class="hero-fig" data-mask>${img('portrait',900,1150,'Antara in a yellow silk saree, holding a brass plate of luchi and cholar dal','fetchpriority="high" loading="eager"').replace('loading="lazy" ','')}</figure>
  <figure class="hero-side" data-parallax="-0.06" aria-hidden="true">${img('reel:DdjdadYTNvT',420,520,'')}</figure>
  ${latest?`<a class="hero-tag" href="#/reels">Latest reel — ${esc(latest.t)}</a>`:''}
@@ -430,10 +430,10 @@ function secAcademy(s){return `<section class="sec" id="academy"><div class="wra
  <p class="lead" data-reveal style="margin-top:20px">${esc(s.sub)}</p>
  <div style="margin-top:clamp(36px,4vw,56px)" data-reveal>${DB.courses.map((c,i)=>`<div class="course-row"><span class="cn">${String(i+1).padStart(2,'0')}</span><h3>${esc(c.title)}</h3><div class="cm"><span class="pill">${esc(c.level)}</span><span class="pill">${esc(c.dur)}</span><span class="pill concept">Concept — coming soon</span></div></div>`).join('')}</div>
  ${waitForm('academy',false)}</div></section>`}
-function secInsta(s){const top=visReels().slice().sort((a,b)=>b.v-a.v).slice(0,6);return `<section class="sec sec-cream"><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
- <div>${kicker('08 · On Instagram')}<h2 class="h2" data-reveal>${esc(s.headline)}</h2><p class="lead" data-reveal style="margin-top:16px">${esc(s.sub)} Her most-loved reels, straight from ${esc(DB.settings.instagram)}.</p></div>
- <div class="hero-ctas" style="margin-top:0" data-reveal><a class="btn solid" href="#/reels">All ${visReels().length} reels <span class="ar">→</span></a><a class="btn" href="${IGURL()}" target="_blank" rel="noopener">Follow ↗</a></div></div>
- <div class="reel-row">${top.map((r,i)=>reelCard(r,i)).join('')}</div></div></section>`}
+function secInsta(s){const top=homeReels();return `<section class="sec sec-cream"><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+ <div>${kicker('08 · On Instagram')}<h2 class="h2" data-reveal>${esc(s.headline)}</h2><p class="lead" data-reveal style="margin-top:16px">${esc(s.sub)} Her newest and most-loved reels, straight from ${esc(DB.settings.instagram)}.</p></div>
+ <div class="hero-ctas" style="margin-top:0" data-reveal><a class="btn solid" href="#/reels">All reels <span class="ar">→</span></a><a class="btn" href="${IGURL()}" target="_blank" rel="noopener">Follow ↗</a></div></div>
+ <div class="reel-row" id="home-reels">${top.map((r,i)=>reelCard(r,i)).join('')}</div></div></section>`}
 function secClosing(s){return `<section class="sec sec-burg close-band"><div class="close-bg" aria-hidden="true">${img('closing-thali',1600,900,'')}</div><div class="wrap">${kicker('06 · Collaborate')}
  <h2 class="h2" data-reveal>${esc(s.headline)}</h2><p class="sub" data-reveal style="margin-top:26px;color:#D9C6BB;max-width:52ch;font-size:1.05rem">${esc(s.sub)}</p>
  <div class="hero-ctas" data-reveal><a class="btn ghost-light" href="${esc(s.href1)}">${esc(s.cta1)} <span class="ar">→</span></a><a class="btn ghost-light" href="${esc(s.href2)}">${esc(s.cta2)}</a></div></div></section>`}
@@ -487,7 +487,7 @@ function setMeta(m){const h=document.head;
  if(m.crumbs)graph.push({'@type':'BreadcrumbList',itemListElement:[['Home','/'],...m.crumbs].map(([n,p],i)=>({'@type':'ListItem',position:i+1,name:n,item:absURL(pathHref(p))||undefined}))});
  if(!m.notFound){const s=document.createElement('script');s.type='application/ld+json';s.dataset.ld='1';s.textContent=JSON.stringify({'@context':'https://schema.org','@graph':graph});h.appendChild(s)}}
 function personLD(){return{'@type':'Person','@id':'#antara',name:'Antara',jobTitle:'Food creator and recipe developer',description:SITE.tagline,url:SITE.url?SITE.url+'/':undefined,image:typeof OG_IMAGES!=='undefined'?absURL(OG_IMAGES.portrait||OG_IMAGES.default)||undefined:undefined,
- homeLocation:{'@type':'Place',name:'Bangalore, India'},knowsLanguage:['en','bn'],knowsAbout:['Bengali cuisine','Recipe development','Food photography','Food video'],sameAs:[IGURL()]}}
+ homeLocation:{'@type':'Place',name:'Bangalore, India'},knowsLanguage:['en','bn'],knowsAbout:['Bengali cuisine','Recipe development','Food photography','Food video'],sameAs:[IGURL(),FBURL(),YTURL()]}}
 function homeLD(){return{'@type':'WebSite',name:'Antara',url:SITE.url?SITE.url+'/':undefined,inLanguage:'en-IN',publisher:{'@id':'#antara'}}}
 const ISO_RX=/(\d+)\s*(h|hr|hrs|hour|hours|min|mins|minute|minutes)\b/gi;
 function isoDur(t){if(!t||t==='—')return undefined;let h=0,mi=0;String(t).replace(ISO_RX,(_,n,u)=>{if(/^h/i.test(u))h+=+n;else mi+=+n});return h||mi?`PT${h?h+'H':''}${mi?mi+'M':''}`:undefined}
@@ -516,6 +516,77 @@ function refreshReels(){const g=$('#reel-grid');if(!g)return;g.innerHTML=reelGri
 /* ---------- REEL LIGHTBOX ---------- */
 let reelSeq=[],reelIdx=0,reelReturn=null;
 function capHTML(t){t=String(t).replace(/\*\*|__|^#{1,3}\s+/gm,'').replace(/^\s*[*\-•]\s+/gm,'• ');return esc(t).replace(/#([\wঀ-৿]+)/g,'<span class="tag-h">#$1</span>').split(/\n{2,}/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('')}
+const ICO={
+ ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></svg>',
+ fb:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.4h2.5l.4-3h-2.9V8.8c0-.9.3-1.5 1.5-1.5h1.5V4.6c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.3H8.1v3h2.5V21h2.9z"/></svg>',
+ yt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z"/></svg>'};
+const FBURL=()=>DB.settings.facebook||'https://www.facebook.com/antaramakeupartistry', YTURL=()=>DB.settings.youtube||'https://www.youtube.com/@ArtisanAntara';
+const LIVE={on:false,stories:[],yt:[],fresh:[]};
+function socialButtons(cls=''){return `<div class="soc ${cls}">
+ <a class="soc-b ig" href="${IGURL()}" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)">${ICO.ig}<span>Instagram</span></a>
+ <a class="soc-b fb" href="${FBURL()}" target="_blank" rel="noopener" aria-label="Facebook (opens in a new tab)">${ICO.fb}<span>Facebook</span></a>
+ <a class="soc-b yt" href="${YTURL()}" target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)">${ICO.yt}<span>YouTube</span></a></div>`}
+const daysAgo=d=>(Date.now()-Date.parse(d))/864e5;
+function latestReel(){return visReels().slice().sort((a,b)=>b.d.localeCompare(a.d))[0]}
+function storyBar(){const st=LIVE.stories,yt=LIVE.yt[0],nr=latestReel();
+ const bub=o=>{const inner=`<span class="story-ring ${o.on?'on':''}"><span class="story-img">${o.img?`<img src="${o.img}" alt="" loading="lazy" decoding="async">`:''}</span><i class="story-badge ${o.k}">${ICO[o.k]||ICO.ig}</i></span><span class="story-lbl">${esc(o.lbl)}</span>${o.sub?`<span class="story-sub">${esc(o.sub)}</span>`:''}`;
+  return o.href?`<a class="story" href="${o.href}" target="_blank" rel="noopener" aria-label="${esc(o.aria)}">${inner}</a>`:`<button class="story" type="button" data-action="${o.act}" ${o.data||''} aria-label="${esc(o.aria)}">${inner}</button>`};
+ const items=[
+  st.length?{k:'ig',act:'story-open',on:1,img:st[0].thumb,lbl:'Stories',sub:st.length>1?st.length+' new today':'new today',aria:`Watch Antara’s ${st.length} Instagram ${st.length>1?'stories':'story'} from the last 24 hours`}
+           :{k:'ig',href:IGURL(),img:PORTRAIT,lbl:'Stories',sub:'on Instagram',aria:'Antara’s stories on Instagram (opens Instagram)'},
+  nr&&{k:'ig',act:'reel-open',data:`data-code="${nr.c}"`,on:daysAgo(nr.d)<4,img:REEL_COVERS[nr.c],lbl:'Latest reel',sub:fmtD(Date.parse(nr.d)),aria:'Play the latest reel: '+nr.t},
+  yt?{k:'yt',act:'yt-open',data:`data-id="${esc(yt.id)}"`,on:daysAgo(yt.date)<4,img:yt.thumb,lbl:'YouTube',sub:'latest video',aria:'Watch the latest YouTube video: '+ytTitle(yt.title)}
+    :{k:'yt',href:YTURL(),img:PORTRAIT,lbl:'YouTube',sub:'@ArtisanAntara',aria:'Antara on YouTube (opens YouTube)'},
+  {k:'fb',href:FBURL(),img:PORTRAIT,lbl:'Facebook',sub:'follow',aria:'Antara on Facebook (opens Facebook)'}].filter(Boolean);
+ return `<nav class="story-bar" id="story-bar" aria-label="Antara’s stories and channels" data-reveal>${items.map(bub).join('')}</nav>`}
+/* ---- turn an Instagram caption into a short title ---- */
+function liveTitle(cap){const lines=String(cap||'').split('\n').map(x=>x.replace(/#[^\s#]+/g,'').replace(/@[\w.]+/g,'').replace(/[\p{Extended_Pictographic}️‍]/gu,'').replace(/\s+/g,' ').trim());
+ let l=lines.find(x=>x.replace(/[^\p{L}\p{N}]/gu,'').length>3)||'New on Instagram';l=l.replace(/^[\s\W]+|[\s,;:.!-]+$/gu,'');
+ return l.length>58?l.slice(0,55).replace(/\s\S*$/,'')+'…':l}
+const LIVE_CAT=[['F',/fish|prawn|chingri|ilish|hilsa|crab|pomfret|bhetki|seafood|machh|maach/i],['C',/chicken|mutton|\begg|meat|kosha|biryani|keema/i],['S',/sweet|cake|mishti|dessert|bake|cookie|payesh|sandesh|rasgulla|kheer|ladoo|halwa/i],['T',/street|snack|chaat|roll\b|momo|puchka|fritter|pakora|chop\b/i],['V',/\bveg|paneer|\bdal\b|sabzi|aloo|potato|mushroom/i],['B',/bengali|bangali|kolkata|\bbong|bangla/i],['X',/puja|pujo|durga|diwali|bijoya|festive|navratri|eid|christmas/i],['P',/protein/i]];
+function mergeLive(items){let added=0;
+ items.slice().reverse().forEach(x=>{const have=mediaBy(x.code);
+  if(have){have.l=Math.max(have.l||0,x.likes||0);have.m=Math.max(have.m||0,x.comments||0);return}
+  const paid=/#ad\b|#sponsored|paid partnership|#paidpartnership/i.test(x.cap||''),collab=paid||/#collab|#partnership|in collaboration with/i.test(x.cap||'');
+  const r={c:x.code,t:liveTitle(x.cap),g:LIVE_CAT.filter(([,re])=>re.test(x.cap||'')).map(([k])=>k).join(''),b:collab?'Brand partner':'',d:String(x.date||new Date().toISOString()).slice(0,10),v:0,l:x.likes||0,m:x.comments||0,s:0,o:REEL_HANDLE,p:paid,cap:x.cap||'',live:1};
+  if(x.kind==='photo'){r.k='photo';EXTRA.unshift(r)}else REELS.unshift(r);
+  if(x.thumb)REEL_COVERS[x.code]=x.thumb;LIVE.fresh.push(x.code);added++});
+ return added}
+function refreshLiveUI(){const sb=$('#story-bar');if(sb){sb.outerHTML=storyBar();$('#story-bar')?.classList.add('in')}
+ const nr=latestReel(),tag=$('.hero-tag');if(tag&&nr)tag.textContent='Latest reel — '+nr.t;
+ const hr=$('#home-reels');if(hr){hr.innerHTML=homeReels().map((r,i)=>reelCard(r,i)).join('');hr.querySelectorAll('[data-reveal]').forEach(e=>e.classList.add('in'))}
+ if($('#reel-grid'))refreshReels()}
+function homeReels(){const v=visReels(),newest=v.slice().sort((a,b)=>b.d.localeCompare(a.d)).slice(0,2),top=v.slice().sort((a,b)=>b.v-a.v).filter(r=>!newest.includes(r));return newest.concat(top).slice(0,6)}
+function loadLive(){if(!/^https?:$/.test(location.protocol)||MODE==='studio')return;
+ const use=d=>{if(!d)return;LIVE.on=true;LIVE.yt=(d.yt||[]).filter(v=>v&&v.id);LIVE.stories=(d.ig&&d.ig.stories||[]).filter(s=>s&&s.src);
+  if(d.ig&&d.ig.items)mergeLive(d.ig.items);refreshLiveUI()};
+ let cached=null;try{const c=JSON.parse(sessionStorage.getItem('antara_live')||'null');if(c&&Date.now()-c.t<5*60e3)cached=c.d}catch(e){}
+ if(cached){use(cached);return}
+ fetch((BASE||'')+'/api/social',{headers:{accept:'application/json'}}).then(r=>r.ok?r.json():null).then(d=>{if(!d)return;try{sessionStorage.setItem('antara_live',JSON.stringify({t:Date.now(),d}))}catch(e){}use(d)}).catch(()=>{})}
+/* ---- story & YouTube viewers ---- */
+let storyIdx=0,storyTimer=null;
+function storyClear(){clearTimeout(storyTimer);storyTimer=null}
+function openStory(i){const st=LIVE.stories;if(!st.length)return;storyIdx=Math.max(0,Math.min(i,st.length-1));storyClear();const s=st[storyIdx];
+ if(!reelReturn)reelReturn=document.activeElement;
+ openModal(`<div class="story-lb" role="document">
+ <div class="story-prog" aria-hidden="true">${st.map((_,k)=>`<i class="${k<storyIdx?'done':k===storyIdx?'now':''}"><b></b></i>`).join('')}</div>
+ <div class="story-head"><span class="story-av"><img src="${PORTRAIT}" alt=""></span><span><b>${esc(REEL_HANDLE)}</b> <span class="mono">${Math.max(1,Math.round((Date.now()-Date.parse(s.date))/36e5))}h ago</span></span><button class="lb-x" data-close aria-label="Close stories">✕</button></div>
+ <div class="story-media">${s.type==='VIDEO'?`<video id="story-media" src="${s.src}" poster="${s.thumb||''}" autoplay muted playsinline controls></video>`:`<img id="story-media" src="${s.src}" alt="Instagram story ${storyIdx+1} of ${st.length}">`}
+  <button class="story-nav prev" data-action="story-step" data-d="-1" aria-label="Previous story" ${storyIdx===0?'disabled':''}>‹</button><button class="story-nav next" data-action="story-step" data-d="1" aria-label="${storyIdx===st.length-1?'Close stories':'Next story'}">›</button></div>
+ <div class="story-foot"><span class="mono">${storyIdx+1} / ${st.length} · disappears 24h after posting</span><a class="btn sm solid" href="${esc(s.url||IGURL())}" target="_blank" rel="noopener">Reply on Instagram ↗</a></div></div>`,false);
+ $('#modal .modal-box').classList.add('story-modal');$('#modal').setAttribute('aria-label','Instagram stories');
+ const m=$('#story-media'),cur=$('.story-prog .now b'),dur=s.type==='VIDEO'?0:6000;
+ if(m&&s.type==='VIDEO'){m.addEventListener('ended',()=>storyStep(1));m.addEventListener('loadedmetadata',()=>{if(cur&&!reduced)cur.style.transition=`width ${m.duration}s linear`,requestAnimationFrame(()=>cur.style.width='100%')})}
+ else if(!reduced){if(cur){cur.style.transition=`width ${dur}ms linear`;requestAnimationFrame(()=>requestAnimationFrame(()=>cur.style.width='100%'))}storyTimer=setTimeout(()=>{if($('#story-media'))storyStep(1)},dur)}
+ setTimeout(()=>$('#modal [data-close]')?.focus(),60)}
+function storyStep(d){const n=storyIdx+d;if(n<0)return;if(n>=LIVE.stories.length){storyClear();closeModal();return}openStory(n)}
+function ytTitle(t){const l=liveTitle(t);if(l!=='New on Instagram')return l;const tags=String(t).match(/#[^\s#]+/g)||[];return tags.slice(0,3).map(x=>x.slice(1).replace(/^./,c=>c.toUpperCase())).join(' · ')||'Latest video'}
+function openYT(id){const v=LIVE.yt.find(x=>x.id===id);if(!v)return;storyClear();if(!reelReturn)reelReturn=document.activeElement;
+ openModal(`<div class="yt-lb" role="document"><button class="lb-x" data-close aria-label="Close video">✕</button>
+ <div class="yt-frame"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?autoplay=1&rel=0" title="YouTube video: ${esc(v.title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+ <div class="yt-info"><span class="mono">YouTube · ${fmtD(Date.parse(v.date))}</span><h3>${esc(ytTitle(v.title))}</h3>
+ <div class="lb-acts"><a class="btn sm solid" href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener">Open on YouTube ↗</a><a class="btn sm" href="${YTURL()}" target="_blank" rel="noopener">Subscribe ↗</a></div></div></div>`,true);
+ $('#modal .modal-box').classList.add('yt-modal');$('#modal').setAttribute('aria-label','YouTube video');setTimeout(()=>$('#modal [data-close]')?.focus(),60)}
 const HEALTH_BRANDS=['Kapiva'];
 function openReel(code,seq){const r=mediaBy(code);if(!r)return;const kind=r.k==='photo'?'p':'reel';reelSeq=seq&&seq.length?seq:[code];reelIdx=Math.max(0,reelSeq.indexOf(code));
  const rec=DB.recipes.find(x=>x.reel===code&&x.status==='published');
@@ -735,6 +806,9 @@ document.addEventListener('click',e=>{
  if(t.hasAttribute('data-close')){closeModal();return}
  switch(a){
   case 'reel-open':{e.preventDefault();const scope=t.closest('#reel-grid,.reel-row');const seq=scope?[...scope.querySelectorAll('[data-action=reel-open]')].map(b=>b.dataset.code):[];openReel(t.dataset.code,seq);break}
+  case 'story-open':storyClear();openStory(0);break;
+  case 'story-step':storyStep(+t.dataset.d);break;
+  case 'yt-open':openYT(t.dataset.id);break;
   case 'reel-step':{const n=reelIdx+(+t.dataset.d);if(n>=0&&n<reelSeq.length)openReel(reelSeq[n],reelSeq);break}
   case 'reel-cat':{RF.cat=t.dataset.k;RF.n=24;$$('[data-action=reel-cat]').forEach(c=>{c.classList.toggle('on',c===t);c.setAttribute('aria-pressed',c===t)});refreshReels();break}
   case 'reel-more':{RF.n+=24;refreshReels();break}
@@ -904,5 +978,6 @@ function applyContent(c){if(!c||c.v!==4)return false;['settings','tokens','servi
  if(Array.isArray(c.recipes))DB.recipes=c.recipes;if(Array.isArray(c.projects))DB.projects=c.projects;if(c.pages&&c.pages.home&&c.pages.home.live)DB.pages.home.live=c.pages.home.live;DB.publishedAt=c.published;applyTokens();return true}
 if(location.protocol==='file:'){try{applyContent(JSON.parse(localStorage.getItem('antara_published')))}catch(e){}}
 /* boot */
+setTimeout(loadLive,0);
 route();
 if(/^https?:$/.test(location.protocol)&&ROUTING==='path'){fetch((BASE||'')+'/content.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(c=>{if(c&&c.published!==DB.publishedAt&&applyContent(c)){const {path,query}=currentRoute();renderSite(path,query);initReveals()}}).catch(()=>{})}
