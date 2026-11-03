@@ -287,7 +287,7 @@ function headerHTML(active){
  <a class="wordmark" href="#/" aria-label="Antara — home">Antara<span class="dot">.</span><em>studio</em></a>
  <nav class="hdr-nav" aria-label="Primary">${nav.map(([h,l])=>`<a href="${h}" class="${active===h?'on':''}">${l}</a>`).join('')}</nav>
  <div class="hdr-right">
-   <a class="ig-mini" href="${IGURL()}" target="_blank" rel="noopener" aria-label="Instagram ${esc(DB.settings.instagram)}">IG ↗</a>
+   <a class="ig-mini" href="${IGURL()}" target="_blank" rel="noopener" aria-label="Instagram ${esc(DB.settings.instagram)}">Instagram ↗</a>
    <a class="btn sm" href="#/collaborate">Plan a collaboration</a>
    <button class="menu-btn" data-action="menu-open" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
  </div></header>`}
@@ -298,7 +298,7 @@ function footerHTML(){const s=DB.settings;
   <div><h4>Explore</h4><a class="fl" href="#/work">Work</a><a class="fl" href="#/recipes">Recipes</a><a class="fl" href="#/about">About</a><a class="fl" href="#/collaborate">Collaborate</a><a class="fl" href="#/reels">Reels</a></div>
   <div><h4>Elsewhere</h4>${socialButtons()}<a class="fl" href="${IGURL()}" target="_blank" rel="noopener">Instagram ${esc(s.instagram)} ↗</a><a class="fl" href="${FBURL()}" target="_blank" rel="noopener">Facebook ↗</a><a class="fl" href="${YTURL()}" target="_blank" rel="noopener">YouTube @ArtisanAntara ↗</a>${s.email?`<a class="fl" href="mailto:${esc(s.email)}">${esc(s.email)}</a>`:''}<a class="fl" href="#/pantry">The Pantry · coming soon</a><a class="fl" href="#/academy">Kitchen Academy · coming soon</a></div>
   <div><h4>The Sunday Note</h4><p style="font-size:.85rem;margin-bottom:14px">One recipe, one story — occasionally.</p>
-  <form class="nl-mini" data-form="newsletter" novalidate><label class="sr-only" for="nl-foot">Email address</label><input id="nl-foot" type="email" name="email" placeholder="your@email.com" autocomplete="email" required><button type="submit">Join</button></form>
+  <form class="nl-mini" data-form="newsletter" method="post" novalidate><label class="sr-only" for="nl-foot">Email address</label><div class="nl-mini-row"><input id="nl-foot" type="email" name="email" placeholder="your@email.com" autocomplete="email" required><button type="submit">Join</button></div><label class="consent consent-mini"><input type="checkbox" name="consent" required data-msg="Please tick to confirm you’re happy to receive emails."><span>I’m happy to receive occasional emails. Unsubscribe anytime.</span></label></form>
   <p class="fineprint" style="margin-top:8px">By joining you agree to occasional emails. Unsubscribe anytime · <a href="#/privacy" style="text-decoration:underline">Privacy</a></p></div>
  </div>
  <div class="ftr-bottom"><span>© 2026 Antara · ${esc(s.location)}</span><span><a href="#/privacy">Privacy &amp; cookies</a></span>${MODE==='studio'?'<span><a href="#/admin/overview">Studio</a></span>':'<span>Food. Creativity. Connection.</span>'}</div>
@@ -384,7 +384,7 @@ function whyAntara(){const st=reelStats(),med=median(visReels().map(r=>r.v)),bm=
  <div><b>${fmtN(st.v)}</b><span>plays across her latest ${st.n} reels; ${big} passed 100K</span></div>
  <div><b>${bm>om?'+'+Math.round((bm/om-1)*100)+'%':Math.round((bm/om-1)*100)+'%'}</b><span>median plays on brand reels vs her own</span></div></div>
  <p class="fineprint">Public Instagram data for @${REEL_HANDLE}: plays and likes collected ${fmtD(Date.parse(REEL_SYNC))}, followers ${fmtD(Date.parse(PROFILE.asOf))}. Whether any reel was boosted is not verified. Saves, reach and audience demographics are shared in the media kit.</p></div>`}
-function mediaKitCTA(){return `<div class="mk" data-reveal><div><h3>Request the media kit</h3><p>Audience profile, recent performance, formats, usage options and indicative collaboration packages.</p></div><a class="btn solid" href="#/collaborate?type=media-kit">Request media kit <span class="ar">→</span></a></div>`}
+function mediaKitCTA(){return `<div class="mk" data-reveal><div><h3>Request the media kit</h3><p>Audience profile, recent performance, formats, usage options and indicative collaboration packages.</p></div><a class="btn solid" href="/collaborate/?type=media-kit#enquiry">Request media kit <span class="ar">→</span></a></div>`}
 function secBrands(s){return `<section class="sec" id="proof"><div class="wrap">${kicker(s.kicker)}<h2 class="h2" data-reveal style="max-width:22ch">${esc(s.headline)}</h2>
  <p class="lead" data-reveal style="margin-top:20px">${esc(s.sub)}</p>
  ${whyAntara()}
@@ -398,7 +398,7 @@ function secNext(s){return `<section class="sec" id="next"><div class="wrap">${k
  <div class="next-grid"><a class="next-card" href="#/pantry" data-reveal><span class="pill concept">Concept · no launch date</span><h3>The Pantry</h3><p>Small-batch products rooted in Bengal. Nothing is for sale yet.</p><span class="tlink">Read more →</span></a>
  <a class="next-card" href="#/academy" data-reveal><span class="pill concept">Concept · not enrolling</span><h3>The Kitchen Academy</h3><p>Courses in Bengali classics, everyday cooking and food styling — in development.</p><span class="tlink">Read more →</span></a>
  <div class="next-card nl" data-reveal><h3>The Sunday Note</h3><p>One recipe, one story — occasionally. Hear first when either chapter opens.</p>
- <form class="wait-form" data-form="newsletter" data-src="home" novalidate><div class="field"><label for="nl-home">Email address</label><input id="nl-home" type="email" name="email" autocomplete="email" placeholder="you@example.com" required></div>
+ <form class="wait-form" data-form="newsletter" data-src="home" method="post" novalidate><div class="field"><label for="nl-home">Email address</label><input id="nl-home" type="email" name="email" autocomplete="email" placeholder="you@example.com" required></div>
  <label class="consent"><input type="checkbox" name="consent" required data-msg="Please tick to confirm you’re happy to receive emails."><span>I’m happy to receive occasional emails. Unsubscribe anytime. <a href="#/privacy" style="text-decoration:underline">Privacy</a></span></label>
  <button class="btn solid" type="submit" style="justify-self:start">Join the Sunday Note <span class="ar">→</span></button></form></div></div></div></section>`}
 function secPhilosophy(s){return `<section class="sec sec-dark"><div class="wrap">
@@ -468,7 +468,7 @@ function renderSite(path,query){
  if(!firstLoad)setTimeout(()=>$('#main')?.focus({preventScroll:true}),320);
  setMeta(meta);
  const ml=$('#mnav-mail');if(ml)ml.textContent=DB.settings.email||'';const mi=$('#mnav-ig');if(mi)mi.href=IGURL();const mlc=$('#mnav-loc');if(mlc)mlc.textContent=DB.settings.location;countUps();
- if(path==='/collaborate'&&query.get('type')==='media-kit')setTimeout(()=>{const f=$('#enq-form');if(f){f.scrollIntoView({block:'start',behavior:reduced?'auto':'smooth'});f.querySelector('input')?.focus({preventScroll:true})}},350);
+ if(path==='/collaborate'&&query.get('type')==='media-kit')setTimeout(()=>{const h=$('#enquiry-heading');if(h){h.scrollIntoView({block:'start',behavior:reduced?'auto':'smooth'});h.focus({preventScroll:true})}},350);
 }
 /* ---------- SEO: per-route metadata and structured data ---------- */
 function absURL(u){if(!u)return '';if(/^https?:/.test(u))return u;return SITE.url?SITE.url+(u.startsWith('/')?u:'/'+u):''}
@@ -723,22 +723,23 @@ function pageRecipeDetail(slug){const r=DB.recipes.find(x=>x.slug===slug&&x.stat
  <div style="padding:60px 0 90px"><a class="btn" href="#/recipes">← All Recipes</a></div></div></section>`}
 function pageCollab(query){const sv=DB.services||SERVICES_DEFAULT,mk=query&&query.get('type')==='media-kit';
  const types=[...sv.map(x=>x.n),'Media kit request','Something else'];
- return pageHero('Collaborate','Your brand. A better story.','For food, kitchen and lifestyle brands that want more than product placement: original recipes, considered storytelling and content people genuinely want to save and cook.')+`
+ return pageHero('Collaborate','Your brand. A better story.',`For food, kitchen and lifestyle brands that want more than product placement: original recipes, considered storytelling and content people genuinely want to save and cook.<span class="page-hero-action"><a class="btn solid" href="#enquiry">Start an enquiry <span class="ar">→</span></a><a class="tlink" href="/collaborate/?type=media-kit#enquiry">Request the media kit</a></span>`)+`
  <section class="sec" style="padding-top:50px"><div class="wrap">${kicker('Services')}
  <p class="lead" data-reveal style="margin-top:14px">From one hero recipe to a season-long content partnership, every project begins with the audience, the cultural moment and the role the product can honestly play. Pricing is quoted per brief.</p>
  <div class="svc-pack">${sv.map((x,i)=>`<article class="pack" data-reveal><span class="n">${String(i+1).padStart(2,'0')}</span><h3>${esc(x.n)}</h3><p>${esc(x.d)}</p>
  <dl><div><dt>Typically includes</dt><dd><ul>${x.inc.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></dd></div><div><dt>Add-ons</dt><dd>${esc(x.add.join(' · '))}</dd></div><div><dt>Lead time</dt><dd>${esc(x.lead)}</dd></div><div><dt>Usage rights</dt><dd>${esc(x.use)}</dd></div><div><dt>Price</dt><dd>Quoted per brief</dd></div></dl></article>`).join('')}</div>
+ <div class="section-action" data-reveal><p>Have a brief already?</p><a class="btn solid" href="#enquiry">Start an enquiry <span class="ar">→</span></a></div>
  ${kicker('The process')}<div class="proc">${[['Discover','A proper conversation about the brand, the audience and what success looks like.'],['Conceptualise','Recipes, references and a treatment — approved before a single pan is heated.'],['Create','Production in natural light, with testing done properly and revisions planned in.'],['Deliver','Final assets, usage terms and honest reporting where numbers exist.']].map(s=>`<div data-reveal><span class="n">STEP →</span><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('')}</div>
  <div style="margin-top:clamp(50px,6vw,80px)">${kicker('Selected results')}<h2 class="h2" style="font-size:clamp(1.8rem,3.4vw,2.8rem)" data-reveal>Brand reels that people actually watch.</h2>${whyAntara()}
  <div class="reel-row scroll" style="margin-top:28px">${visReels().filter(r=>r.b).sort((a,b)=>b.v-a.v).map((r,i)=>reelCard(r,i)).join('')}</div></div>
  <p class="fineprint" style="margin-top:16px">Disclosure matters: every brand reel on this site is labelled — “Paid partnership · #ad” where the post carries the tag, “Brand collaboration” otherwise.</p>
  ${mediaKitCTA()}</div></section>
  <section class="sec sec-cream" id="enquiry"><div class="wrap"><div class="collab-grid">
- <div class="collab-side">${kicker(mk?'Media kit':'Enquiry')}<h2 class="h2" style="font-size:clamp(1.8rem,3vw,2.6rem)" data-reveal>${mk?'Request the media kit.':'Tell Antara about the project.'}</h2>
+ <div class="collab-side">${kicker(mk?'Media kit':'Enquiry')}<h2 class="h2" id="enquiry-heading" tabindex="-1" style="font-size:clamp(1.8rem,3vw,2.6rem)" data-reveal>${mk?'Request the media kit.':'Tell Antara about the project.'}</h2>
  <p style="color:var(--ink2);margin-top:18px;font-size:.95rem">Share your brief, timeline and intended usage. Antara’s studio replies within two working days once your enquiry has been delivered.</p>
  <p style="color:var(--ink2);margin-top:12px;font-size:.95rem">Prefer Instagram? <a href="${IGURL()}" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid var(--accent)">Message ${esc(DB.settings.instagram)}</a>${DB.settings.email?` · or email <a href="mailto:${esc(DB.settings.email)}" style="color:var(--accent);border-bottom:1px solid var(--accent)">${esc(DB.settings.email)}</a>`:''}</p>
  <p class="fineprint" style="margin-top:14px">Your details are used only to reply to this enquiry. <a href="#/privacy" style="text-decoration:underline">How your data is handled</a>.</p></div>
- <div class="collab-form"><form class="form" data-form="enquiry" id="enq-form" novalidate style="max-width:none">
+ <div class="collab-form"><form class="form" data-form="enquiry" id="enq-form" method="post" novalidate style="max-width:none">
  <div class="form-2col"><div class="field"><label for="eq-name">Name *</label><input id="eq-name" name="name" type="text" autocomplete="name" required data-msg="Please add your name."></div>
  <div class="field"><label for="eq-co">Company / Brand *</label><input id="eq-co" name="company" type="text" autocomplete="organization" required data-msg="Please add your company or brand."></div></div>
  <div class="form-2col"><div class="field"><label for="eq-mail">Professional email *</label><input id="eq-mail" name="email" type="email" autocomplete="email" required data-msg="Please add a valid email, like name@brand.com."></div>
