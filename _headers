@@ -10,5 +10,9 @@
   Cache-Control: public, max-age=604800
 /media/*
   Cache-Control: public, max-age=2592000
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
 /content.json
   Cache-Control: no-cache
