@@ -288,7 +288,6 @@ function headerHTML(active){
  <nav class="hdr-nav" aria-label="Primary">${nav.map(([h,l])=>`<a href="${h}" class="${active===h?'on':''}">${l}</a>`).join('')}</nav>
  <div class="hdr-right">
    <a class="ig-mini" href="${IGURL()}" target="_blank" rel="noopener" aria-label="Instagram ${esc(DB.settings.instagram)}">Instagram ↗</a>
-   <a class="btn sm" href="#/collaborate">Plan a collaboration</a>
    <button class="menu-btn" data-action="menu-open" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
  </div></header>`}
 function footerHTML(){const s=DB.settings;
