@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# Add "Sitemap: https://YOUR-DOMAIN/sitemap.xml" once the domain is set.
+Sitemap: https://antara-portfolio.pages.dev/sitemap.xml
