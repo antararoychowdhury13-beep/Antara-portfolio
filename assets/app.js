@@ -318,7 +318,6 @@ function secHero(s){const st=reelStats(),latest=visReels().slice().sort((a,b)=>b
  <div class="hero-ctas" data-reveal><a class="btn solid" href="${esc(s.href1)}">${esc(s.cta1)} <span class="ar">→</span></a><a class="btn" href="${esc(s.href2)}">${esc(s.cta2)}</a></div>
  <ul class="hero-proof" data-reveal aria-label="At a glance">${PROFILE.verified?'<li><span class="vf" aria-hidden="true">✓</span>Verified creator</li>':''}<li><b>${fmtN(PROFILE.followers)}</b> followers</li><li><b>${fmtN(st.v)}</b> plays · latest ${st.n} reels</li><li><b>${brandsWithReels().length}</b> brand partners</li></ul>${storyBar()}</div>
  <div class="hero-imgs"><figure class="hero-fig" data-mask>${img('portrait',900,1150,'Antara in a yellow silk saree, holding a brass plate of luchi and cholar dal','fetchpriority="high" loading="eager"').replace('loading="lazy" ','')}</figure>
- <figure class="hero-side" data-parallax="-0.06" aria-hidden="true">${img('reel:DdjdadYTNvT',420,520,'')}</figure>
  ${latest?`<a class="hero-tag" href="#/reels">Latest reel — ${esc(latest.t)}</a>`:''}
  <svg class="badge" viewBox="0 0 120 120" aria-hidden="true"><circle class="disc" cx="60" cy="60" r="59"/><defs><path id="bc" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#bc">made with intention · shared with love · </textPath></text><circle cx="60" cy="60" r="4"/></svg>
  <div class="hero-figcap"><span>Luchi &amp; cholar dal</span><span>From her Pujo reel, Oct 2026</span></div></div></div>
