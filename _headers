@@ -8,6 +8,8 @@
 
 /assets/*
   Cache-Control: public, max-age=604800
+/assets/app.js
+  Cache-Control: no-cache, must-revalidate
 /media/*
   Cache-Control: public, max-age=2592000
 /
