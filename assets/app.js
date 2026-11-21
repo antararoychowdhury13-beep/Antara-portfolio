@@ -614,7 +614,7 @@ function countUps(){if(reduced)return;const els=$$('[data-count]');if(!els.lengt
   const tick=t=>{const k=Math.min((t-t0)/1400,1),v=end*(1-Math.pow(1-k,3));el.textContent=fmtN(Math.round(v));if(k<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}),{threshold:.6});els.forEach(e=>o.observe(e))}
 function pageAbout(){return pageHero('About','The cook behind the camera.','Antara Roy Chowdhury, publishing as Artisan Antara, is a Bengali food creator, recipe developer and culinary storyteller based in Bangalore — endlessly curious about why we cook what we cook.')+`
  <section class="sec"><div class="wrap"><div class="abt-grid">
- <div class="abt-fig" data-mask>${img('portrait',800,1000,'Antara in a yellow silk saree, holding a brass plate of luchi and cholar dal')}</div>
+ <div class="abt-fig" data-mask>${img('portrait',1024,1535,'Antara Roy Chowdhury in a professional kitchen, wearing a black chef apron')}</div>
  <div class="abt-txt" data-reveal><p class="dropcap" style="color:var(--ink2);font-size:1.05rem">I did not set out to be a food creator. I set out to keep recipes from disappearing — the kind that live in sound and smell, not in notebooks. Somewhere between the first photograph and the hundredth, that archival impulse turned into a practice: recipes, films and stories made with intention.</p>
  <p style="color:var(--ink2);margin-top:1.2em">Today that practice spans recipe development and branded content, an ongoing personal archive, and two chapters still being written — a product line and a small academy.</p></div></div>
  ${[['The cook','I cook the way I was taught — by instinct first, measurement second. My foundation is the Bengali home kitchen: mustard oil, posto, jaggery, and the discipline of not wasting anything. Everything else — baking, styling, the camera — was learned slowly, on purpose, plate by plate.'],
@@ -739,16 +739,6 @@ function pageCollab(query){const sv=DB.services||SERVICES_DEFAULT,mk=query&&quer
  <a class="contact-card" href="${FBURL()}" target="_blank" rel="noopener"><span>Facebook</span><strong>Artisan Antara</strong><em>Visit profile ↗</em></a>
  <div class="contact-card"><span>Based in</span><strong>${esc(DB.settings.location)}</strong><em>Available for projects across India</em></div>
  </div></div></section>
- <section class="sec" style="padding-top:50px"><div class="wrap">${kicker('Services')}
- <p class="lead" data-reveal style="margin-top:14px">From one hero recipe to a season-long content partnership, every project begins with the audience, the cultural moment and the role the product can honestly play. Pricing is quoted per brief.</p>
- <div class="svc-pack">${sv.map((x,i)=>`<article class="pack" data-reveal><span class="n">${String(i+1).padStart(2,'0')}</span><h3>${esc(x.n)}</h3><p>${esc(x.d)}</p>
- <dl><div><dt>Typically includes</dt><dd><ul>${x.inc.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></dd></div><div><dt>Add-ons</dt><dd>${esc(x.add.join(' · '))}</dd></div><div><dt>Lead time</dt><dd>${esc(x.lead)}</dd></div><div><dt>Usage rights</dt><dd>${esc(x.use)}</dd></div><div><dt>Price</dt><dd>Quoted per brief</dd></div></dl></article>`).join('')}</div>
- <div class="section-action" data-reveal><p>Have a brief already?</p><a class="btn solid" href="#enquiry">Start an enquiry <span class="ar">→</span></a></div>
- ${kicker('The process')}<div class="proc">${[['Discover','A proper conversation about the brand, the audience and what success looks like.'],['Conceptualise','Recipes, references and a treatment — approved before a single pan is heated.'],['Create','Production in natural light, with testing done properly and revisions planned in.'],['Deliver','Final assets, usage terms and honest reporting where numbers exist.']].map(s=>`<div data-reveal><span class="n">STEP →</span><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('')}</div>
- <div style="margin-top:clamp(50px,6vw,80px)">${kicker('Selected results')}<h2 class="h2" style="font-size:clamp(1.8rem,3.4vw,2.8rem)" data-reveal>Brand reels that people actually watch.</h2>${whyAntara()}
- <div class="reel-row scroll" style="margin-top:28px">${visReels().filter(r=>r.b).sort((a,b)=>b.v-a.v).map((r,i)=>reelCard(r,i)).join('')}</div></div>
- <p class="fineprint" style="margin-top:16px">Disclosure matters: every brand reel on this site is labelled — “Paid partnership · #ad” where the post carries the tag, “Brand collaboration” otherwise.</p>
- ${mediaKitCTA()}</div></section>
  <section class="sec sec-cream" id="enquiry"><div class="wrap"><div class="collab-grid">
  <div class="collab-side">${kicker(mk?'Media kit':'Enquiry')}<h2 class="h2" id="enquiry-heading" tabindex="-1" style="font-size:clamp(1.8rem,3vw,2.6rem)" data-reveal>${mk?'Request the media kit.':'Tell Antara about the project.'}</h2>
  <p style="color:var(--ink2);margin-top:18px;font-size:.95rem">Share your brief, timeline and intended usage. Antara’s studio replies within two working days once your enquiry has been delivered.</p>
