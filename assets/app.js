@@ -1,5 +1,6 @@
 
 /* ================= CONFIG ================= */
+document.documentElement.classList.add('motion-ready');
 const MODE='public';
 const PROFILE={followers:5587,posts:632,verified:true,asOf:'2026-10-30'};
 const SITE={name:'Antara',url:(document.querySelector('meta[name=site-url]')?.content||'').replace(/\/+$/,''),
@@ -67,7 +68,7 @@ function reelStats(list){list=list||visReels();const v=list.reduce((a,r)=>a+r.v,
 function reelCard(r,i=0,cls=''){return `<button class="reel ${r.k==='photo'?'is-photo':''} ${cls}" data-action="reel-open" data-code="${r.c}" aria-label="${r.k==='photo'?'View photo post':'Play reel'}: ${esc(r.t)}, ${r.v?fmtN(r.v)+' plays':fmtN(r.l)+' likes'}" style="transition-delay:${(i%6)*.05}s" data-reveal>
  <span class="reel-ph">${img('reel:'+r.c,r.k==='photo'?640:324,r.k==='photo'?800:576,r.t)}<span class="reel-play" aria-hidden="true">▶</span>${r.s?`<span class="reel-dur">${fmtDur(r.s)}</span>`:r.k==='photo'?'<span class="reel-dur">Photo</span>':`<span class="reel-dur">${r.d.slice(0,4)}</span>`}${r.b?`<span class="reel-brand" title="${esc(disclosure(r))}">${esc(r.b)}${adTag(r)?' · Ad':''}</span>`:''}
  <span class="reel-meta"><b>${esc(r.t)}</b><em>${r.v?`▶ ${fmtN(r.v)} plays`:`♥ ${fmtN(r.l)} likes`}</em></span></span></button>`}
-function reelProof(){const st=reelStats();return `<div class="proof" data-reveal>
+function reelProof(list){const st=reelStats(list);return `<div class="proof" data-reveal>
  <div><b data-count="${st.v}">${fmtN(st.v)}</b><span>plays across her last ${st.n} reels</span></div>
  <div><b data-count="${st.top.v}">${fmtN(st.top.v)}</b><span>on a single reel — ${esc(st.top.t||'')}</span></div>
  <div><b data-count="${st.l}">${fmtN(st.l)}</b><span>likes from home cooks</span></div>
@@ -178,6 +179,9 @@ DB=loadDB();
 if(!DB.services)DB.services=clone(SERVICES_DEFAULT);
 if(!DB.pages.home.draft)DB.pages.home.draft=clone(DB.pages.home.live);
 if(!DB.pages.home.trash)DB.pages.home.trash=[];
+(function editorial61(){if(DB.editorial61)return;const p=DB.projects.find(x=>x.id==='pr_cookme');
+ if(p){p.title='Bengali Classics, Made Easy.';p.summary='A six-reel series celebrating Bengali classics through Cookme’s ready mustard paste and spice blends. Two of the reels became some of Antara’s most-watched content.'}
+ DB.editorial61=1;save()})();
 /* Instagram import: adds reel recipes, new partner brands and the real handle — once per sync, never overwriting Antara's edits */
 (function importWork(){
  if(DB.workImport==='2026-10-30')return;
@@ -282,7 +286,7 @@ function menuSet(open){const mn=$('#mnav'),mb=$('.menu-btn');if(!open&&!mn.class
 
 /* ================= SHARED PARTIALS ================= */
 function headerHTML(active){
- const nav=[['#/work','Work'],['#/recipes','Recipes'],['#/about','About'],['#/reels','Reels']];
+ const nav=[['#/reels','Collab'],['#/recipes','Recipes'],['#/about','About'],['#/collaborate','Contacts']];
  return `<header class="hdr" id="hdr">
  <a class="wordmark" href="#/" aria-label="Antara — home">Antara<span class="dot">.</span><em>studio</em></a>
  <nav class="hdr-nav" aria-label="Primary">${nav.map(([h,l])=>`<a href="${h}" class="${active===h?'on':''}">${l}</a>`).join('')}</nav>
@@ -294,7 +298,7 @@ function footerHTML(){const s=DB.settings;
  return `<footer class="ftr"><div class="ftr-mark" aria-hidden="true">Antara</div>
  <div class="ftr-grid">
   <div><div class="ftr-sig">${esc(s.signature)}</div><p style="font-size:.88rem;max-width:36ch">Recipes, films and photographs from a home kitchen in Bangalore — rooted in Bengal, and the collaborations they have started.</p></div>
-  <div><h4>Explore</h4><a class="fl" href="#/work">Work</a><a class="fl" href="#/recipes">Recipes</a><a class="fl" href="#/about">About</a><a class="fl" href="#/collaborate">Collaborate</a><a class="fl" href="#/reels">Reels</a></div>
+  <div><h4>Explore</h4><a class="fl" href="#/reels">Collab</a><a class="fl" href="#/recipes">Recipes</a><a class="fl" href="#/about">About</a><a class="fl" href="#/collaborate">Contacts</a></div>
   <div><h4>Elsewhere</h4>${socialButtons()}<a class="fl" href="${IGURL()}" target="_blank" rel="noopener">Instagram ${esc(s.instagram)} ↗</a><a class="fl" href="${FBURL()}" target="_blank" rel="noopener">Facebook ↗</a><a class="fl" href="${YTURL()}" target="_blank" rel="noopener">YouTube @ArtisanAntara ↗</a>${s.email?`<a class="fl" href="mailto:${esc(s.email)}">${esc(s.email)}</a>`:''}<a class="fl" href="#/pantry">The Pantry · coming soon</a><a class="fl" href="#/academy">Kitchen Academy · coming soon</a></div>
   <div><h4>The Sunday Note</h4><p style="font-size:.85rem;margin-bottom:14px">One recipe, one story — occasionally.</p>
   <form class="nl-mini" data-form="newsletter" method="post" novalidate><label class="sr-only" for="nl-foot">Email address</label><div class="nl-mini-row"><input id="nl-foot" type="email" name="email" placeholder="your@email.com" autocomplete="email" required><button type="submit">Join</button></div><label class="consent consent-mini"><input type="checkbox" name="consent" required data-msg="Please tick to confirm you’re happy to receive emails."><span>I’m happy to receive occasional emails. Unsubscribe anytime.</span></label></form>
@@ -303,25 +307,25 @@ function footerHTML(){const s=DB.settings;
  <div class="ftr-bottom"><span>© 2026 Antara · ${esc(s.location)}</span><span><a href="#/privacy">Privacy &amp; cookies</a></span>${MODE==='studio'?'<span><a href="#/admin/overview">Studio</a></span>':'<span>Food. Creativity. Connection.</span>'}</div>
  </footer>`}
 function kicker(k){return `<div class="kicker" data-scramble>${esc(k)}</div>`}
-function ticker(){const items=['gondhoraj lebu','posto','khejur gur','panch phoron','ghee','ilish','cardamom','bhaja masala','nolen gur','radhuni','smoked salt','mishti doi'];
- const s=items.map(i=>`<span>${i} <b>·</b></span>`).join('');return `<div class="ticker" aria-hidden="true"><div class="ticker-track">${s}${s}</div></div>`}
 const CATS=['Everyday Cooking','Bengali & Regional','Baking & Desserts','Celebrations','Quick & Easy','Global Flavours'];
 const WORK_CATS=['Brand Collaborations','Recipe Development','Food Photography','Reels & Video','Seasonal Campaigns','Personal Projects'];
 
 /* ================= SECTION RENDERERS ================= */
-function brandsWithReels(){return [...new Set(visReels().filter(r=>r.b).map(r=>r.b))]}
+const HIDDEN_BRANDS=new Set(['Prasuma','Nutralite','Sandu Pharma']);
+function brandsWithReels(){return [...new Set(visReels().filter(r=>r.b&&!HIDDEN_BRANDS.has(r.b)).map(r=>r.b))]}
 function secHero(s){const st=reelStats(),latest=visReels().slice().sort((a,b)=>b.d.localeCompare(a.d))[0];
+ const primaryHref=s.href1==='#/work'?'#/reels':s.href1,primaryLabel=s.href1==='#/work'?'View brand collabs':s.cta1;
  return `<section class="hero"><div class="wrap" style="width:100%"><div class="hero-grid">
  <div class="hero-copy"><div class="lm"><span>${kicker(s.kicker)}</span></div>
  <h1><span class="lm"><span>${esc(s.h1a)}</span></span><span class="lm"><span><em>${esc(s.h1b)}</em></span></span></h1>
  <p class="sub" data-reveal>${esc(s.sub)}</p>
- <div class="hero-ctas" data-reveal><a class="btn solid" href="${esc(s.href1)}">${esc(s.cta1)} <span class="ar">→</span></a><a class="btn" href="${esc(s.href2)}">${esc(s.cta2)}</a></div>
+ <div class="hero-ctas" data-reveal><a class="btn solid" href="${esc(primaryHref)}">${esc(primaryLabel)} <span class="ar">→</span></a><a class="btn" href="${esc(s.href2)}">${esc(s.cta2)}</a></div>
  <ul class="hero-proof" data-reveal aria-label="At a glance">${PROFILE.verified?'<li><span class="vf" aria-hidden="true">✓</span>Verified creator</li>':''}<li><b>${fmtN(PROFILE.followers)}</b> followers</li><li><b>${fmtN(st.v)}</b> plays · latest ${st.n} reels</li><li><b>${brandsWithReels().length}</b> brand partners</li></ul>${storyBar()}</div>
- <div class="hero-imgs"><figure class="hero-fig" data-mask>${img('portrait',900,1150,'Antara in a yellow silk saree, holding a brass plate of luchi and cholar dal','fetchpriority="high" loading="eager"').replace('loading="lazy" ','')}</figure>
+ <div class="hero-imgs"><figure class="hero-fig" data-mask><img src="/media/antara-kitchen-portrait.png" width="1024" height="1535" alt="Antara Roy Chowdhury in a professional kitchen" decoding="async" fetchpriority="high" loading="eager" class="ld"></figure>
  ${latest?`<a class="hero-tag" href="#/reels">Latest reel — ${esc(latest.t)}</a>`:''}
  <svg class="badge" viewBox="0 0 120 120" aria-hidden="true"><circle class="disc" cx="60" cy="60" r="59"/><defs><path id="bc" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#bc">made with intention · shared with love · </textPath></text><circle cx="60" cy="60" r="4"/></svg>
- <div class="hero-figcap"><span>Luchi &amp; cholar dal</span><span>From her Pujo reel, Oct 2026</span></div></div></div>
- <div class="hero-base"><a class="scroll-cue" href="#main-start" data-action="scroll-next">Scroll <i></i></a><span>12.97° N · 77.59° E — a home kitchen in Bangalore</span><span data-scramble>Rooted in Bengal</span></div></div></section><span id="main-start"></span>${ticker()}`}
+ <div class="hero-figcap"><span>Antara Roy Chowdhury</span><span>Food creator · Bangalore</span></div></div></div>
+ </div></section><span id="main-start"></span>`}
 function factsRow(){return `<ul class="facts-row" data-reveal><li>Based in Bangalore · Bengali roots</li><li>Writes in English &amp; Bengali</li><li>${Math.floor(PROFILE.posts/10)*10}+ posts on Instagram</li><li>${brandsWithReels().length} brand partners</li></ul>`}
 function secIntro(s){const ps=(s.body||'').split('\n\n');
  return `<section class="sec"><div class="wrap"><div class="intro-grid">
@@ -357,7 +361,7 @@ const WM_STYLE={MasterChow:'m2',KILRR:'m2',Cookme:'m2','Sandu Pharma':'m2',Bazan
 function brandMark(b,cls=''){const src=(DB.brandLogos||{})[b];
  return src?`<span class="bmark has-logo ${cls}"><img src="${esc(src)}" alt="${esc(b)}"></span>`
   :`<span class="bmark ${cls}"><span class="wm ${WM_STYLE[b]||''}">${esc(b)}</span></span>`}
-function brandData(){return DB.brands.map(b=>{const rs=visReels().filter(r=>r.b===b),v=rs.reduce((a,r)=>a+r.v,0),top=rs.slice().sort((x,y)=>y.v-x.v)[0];
+function brandData(){return DB.brands.filter(b=>!HIDDEN_BRANDS.has(b)).map(b=>{const rs=visReels().filter(r=>r.b===b),v=rs.reduce((a,r)=>a+r.v,0),top=rs.slice().sort((x,y)=>y.v-x.v)[0];
  const pid=BRAND_LINKS[b]||(rs.length?'pr_spotlights':'');const pj=DB.projects.find(p=>p.id===pid&&p.status==='published');
  return{b,rs,v,top,n:rs.length,href:pj?'#/work/'+pj.slug:(top?'':'#/collaborate'),code:top?.c}}).sort((a,b)=>b.v-a.v||b.n-a.n)}
 function brandShowcase(){const bd=brandData();const lead=bd[0];
@@ -386,9 +390,8 @@ function mediaKitCTA(){return `<div class="mk" data-reveal><div><h3>Request the 
 function secBrands(s){return `<section class="sec" id="proof"><div class="wrap">${kicker(s.kicker)}<h2 class="h2" data-reveal style="max-width:22ch">${esc(s.headline)}</h2>
  <p class="lead" data-reveal style="margin-top:20px">${esc(s.sub)}</p>
  ${whyAntara()}
- ${brandShowcase()}
- ${mediaKitCTA()}</div></section>`}
-function secServices(s){const sv=DB.services||SERVICES_DEFAULT;return `<section class="sec sec-cream" id="services"><div class="wrap">${kicker(s.kicker)}<h2 class="h2" data-reveal>${esc(s.headline)}</h2>
+ ${brandShowcase()}</div></section>`}
+function secServices(s){const hidden=new Set(['Original recipe development','Food photography','Long-term partnerships']);const sv=(DB.services||SERVICES_DEFAULT).filter(x=>!hidden.has(x.n));return `<section class="sec sec-cream" id="services"><div class="wrap">${kicker(s.kicker)}<h2 class="h2" data-reveal>${esc(s.headline)}</h2>
  <p class="lead" data-reveal style="margin-top:20px">${esc(s.sub)}</p>
  <div class="svc-cards">${sv.map((x,i)=>`<div class="svc-card" data-reveal style="transition-delay:${(i%3)*.06}s"><span class="n">${String(i+1).padStart(2,'0')}</span><h3>${esc(x.n)}</h3><p>${esc(x.d)}</p><p class="lt"><span>Lead time</span>${esc(x.lead)}</p></div>`).join('')}</div>
  <p data-reveal style="margin-top:36px"><a class="tlink" href="${esc(s.href)}">${esc(s.cta)} <span>→</span></a></p></div></section>`}
@@ -442,25 +445,25 @@ const LONGF=['sub','body','p1','p2','p3','quote','note'];
 function renderSite(path,query){
  const sess=getSession();const draft=query.get('draft')==='1'&&sess;
  const secs=DB.pages.home.dirty&&draft?DB.pages.home.draft:DB.pages.home.live;
- let page='',meta={path,title:'Antara — Bengali Food Creator & Recipe Developer, Bangalore',desc:'Antara is a '+SITE.tagline+' — original recipes, food films, photography and campaigns for home cooks and food brands.',img:'default',crumbs:null,ld:null};
+ let page='',meta={path,title:'Antara Roy Chowdhury — Bengali Food Creator, Bangalore',desc:'Antara Roy Chowdhury, publishing as Artisan Antara, creates Bengali recipes, food films, photography and campaigns for home cooks and food brands.',img:'default',crumbs:null,ld:null};
  const slug=path.split('/')[2];
  if(path==='/'){meta.ld=homeLD();
-  page=(draft?`<div class="draft-banner">Draft preview — unpublished changes · <a href="#/admin/pages" style="text-decoration:underline">back to builder</a></div>`:'')+secs.filter(s=>s.visible).map(s=>SECRENDER[s.key]?SECRENDER[s.key](s.f):'').join('')}
- else if(path==='/about'){page=pageAbout();Object.assign(meta,{title:'About Antara — Bengali Food Creator in Bangalore',desc:'Who Antara is: a Bengali food creator and recipe developer in Bangalore, her focus, languages, partners and how she works with brands.',crumbs:[['About','/about']]})}
- else if(path==='/work'){page=pageWork();Object.assign(meta,{title:'Work — Brand Campaigns & Recipe Series | Antara',desc:'Brand partnerships, recipe series and seasonal campaigns by Antara, with the reels and public figures behind each project.',crumbs:[['Work','/work']]})}
+  page=(draft?`<div class="draft-banner">Draft preview — unpublished changes · <a href="#/admin/pages" style="text-decoration:underline">back to builder</a></div>`:'')+secs.filter(s=>s.visible&&s.key!=='work').map(s=>SECRENDER[s.key]?SECRENDER[s.key](s.f):'').join('')}
+ else if(path==='/about'){page=pageAbout();Object.assign(meta,{title:'About Antara Roy Chowdhury — Bengali Food Creator',desc:'Meet Antara Roy Chowdhury, the Bangalore-based Bengali food creator behind Artisan Antara, and learn how her recipes and campaigns are developed.',crumbs:[['About','/about']],ld:profileLD()})}
+ else if(path==='/work'){page=pageWork();Object.assign(meta,{title:'Work — Brand Campaigns & Recipe Series | Antara',desc:'Brand partnerships, recipe series and seasonal campaigns by Antara Roy Chowdhury, with the reels and public figures behind each project.',crumbs:[['Work','/work']],ld:itemListLD('work',DB.projects.filter(p=>p.status==='published'))})}
  else if(path.startsWith('/work/')){page=pageWorkDetail(slug);const p=DB.projects.find(x=>x.slug===slug&&x.status==='published');
-  if(p)Object.assign(meta,{title:`${p.title} — ${p.brand} | Antara`,desc:p.summary||p.brief,img:'work:'+p.slug,crumbs:[['Work','/work'],[p.title,path]],ld:{'@type':'CreativeWork',name:p.title,description:p.summary||p.brief,creator:{'@id':'#antara'},about:p.brand,dateCreated:String(p.year).slice(0,4)}});else meta.notFound=true}
- else if(path==='/recipes'){page=pageRecipes();Object.assign(meta,{title:'Recipes — Bengali & Everyday Cooking | Antara',desc:'Recipes from Antara’s most-watched reels, written out in full — Bengali classics, one-pot weeknight meals, festival food and more.',crumbs:[['Recipes','/recipes']]})}
+  if(p)Object.assign(meta,{title:`${p.title} — ${p.brand} | Antara`,desc:p.summary||p.brief,img:'work:'+p.slug,crumbs:[['Work','/work'],[p.title,path]],ld:{'@type':'CreativeWork','@id':absURL(pathHref(path))+'#work',url:absURL(pathHref(path)),name:p.title,description:p.summary||p.brief,creator:{'@id':personID()},about:p.brand,dateCreated:String(p.year).slice(0,4),inLanguage:'en-IN'}});else meta.notFound=true}
+ else if(path==='/recipes'){page=pageRecipes();Object.assign(meta,{title:'Recipes — Bengali & Everyday Cooking | Antara',desc:'Tested recipes from Antara Roy Chowdhury’s kitchen — Bengali classics, one-pot weeknight meals, festival food and more.',crumbs:[['Recipes','/recipes']],ld:itemListLD('recipes',DB.recipes.filter(r=>r.status==='published'))})}
  else if(path.startsWith('/recipes/')){page=pageRecipeDetail(slug);const r=DB.recipes.find(x=>x.slug===slug&&x.status==='published');
   if(r)Object.assign(meta,{title:`${r.title} Recipe | Antara`,desc:r.excerpt,img:'recipe:'+r.slug,crumbs:[['Recipes','/recipes'],[r.title,path]],ld:recipeLD(r)});else meta.notFound=true}
- else if(path==='/collaborate'){page=pageCollab(query);Object.assign(meta,{title:'Collaborate — Services for Food & Kitchen Brands | Antara',desc:'Sponsored recipe reels, recipe development, food photography, UGC and seasonal campaigns. Request Antara’s media kit or send a brief.',crumbs:[['Collaborate','/collaborate']]})}
- else if(path==='/reels'){page=pageReels();Object.assign(meta,{title:'Reels — Recipe Videos | Antara',desc:'Antara’s latest recipe reels from Instagram — filter by Bengali, vegetarian, festive, high-protein and more.',crumbs:[['Reels','/reels']]})}
+ else if(path==='/collaborate'){page=pageCollab(query);Object.assign(meta,{title:'Contact Antara Roy Chowdhury | Artisan Antara',desc:'Contact Antara Roy Chowdhury for brand partnerships, recipe development, food content and media-kit enquiries.',crumbs:[['Contacts','/collaborate']],ld:servicesLD()})}
+ else if(path==='/reels'){page=pageReels();Object.assign(meta,{title:'Brand Collaborations — Antara Roy Chowdhury',desc:'Watch Antara’s food and kitchen brand collaborations, with clear partnership disclosures and public performance figures.',crumbs:[['Collab','/reels']]})}
  else if(path==='/pantry'){page=pagePantry();Object.assign(meta,{title:'The Pantry (coming soon) | Antara',desc:'A future small-batch product line rooted in Bengal. Nothing is for sale yet.',crumbs:[['The Pantry','/pantry']]})}
  else if(path==='/academy'){page=pageAcademy();Object.assign(meta,{title:'The Kitchen Academy (in development) | Antara',desc:'Planned cooking courses and workshops — concepts, not yet enrolling.',crumbs:[['Kitchen Academy','/academy']]})}
  else if(path==='/privacy'){page=pagePrivacy();Object.assign(meta,{title:'Privacy & Cookies | Antara',desc:'What this website collects, why, who processes it, how long it is kept and how to ask for deletion.',crumbs:[['Privacy','/privacy']]})}
  else meta.notFound=true;
  if(meta.notFound){page=`<section class="page-hero"><div class="wrap">${kicker('404')}<h1>This plate is empty.</h1><p style="margin-top:24px"><a class="btn" href="#/">Back to the kitchen</a></p></div></section>`;Object.assign(meta,{title:'Page not found | Antara',desc:'This page does not exist.',noindex:true,ld:null,crumbs:null})}
- $('#app').innerHTML=headerHTML(path.startsWith('/work')?'#/work':path.startsWith('/recipes')?'#/recipes':'#'+path)+
+ $('#app').innerHTML=headerHTML(path.startsWith('/recipes')?'#/recipes':'#'+path)+
   `<div id="progress" aria-hidden="true"></div><main id="main" tabindex="-1">${page}</main>`+footerHTML()+`<button id="to-top" data-action="to-top" aria-label="Back to top">↑</button>`;
  hrefFix($('#app'));hrefFix($('#mnav'));
  if(!firstLoad)setTimeout(()=>$('#main')?.focus({preventScroll:true}),320);
@@ -484,28 +487,34 @@ function setMeta(m){const h=document.head;
  const graph=[personLD()];if(m.ld)(Array.isArray(m.ld)?m.ld:[m.ld]).forEach(x=>graph.push(x));
  if(m.crumbs)graph.push({'@type':'BreadcrumbList',itemListElement:[['Home','/'],...m.crumbs].map(([n,p],i)=>({'@type':'ListItem',position:i+1,name:n,item:absURL(pathHref(p))||undefined}))});
  if(!m.notFound){const s=document.createElement('script');s.type='application/ld+json';s.dataset.ld='1';s.textContent=JSON.stringify({'@context':'https://schema.org','@graph':graph});h.appendChild(s)}}
-function personLD(){return{'@type':'Person','@id':'#antara',name:'Antara',jobTitle:'Food creator and recipe developer',description:SITE.tagline,url:SITE.url?SITE.url+'/':undefined,image:typeof OG_IMAGES!=='undefined'?absURL(OG_IMAGES.portrait||OG_IMAGES.default)||undefined:undefined,
- homeLocation:{'@type':'Place',name:'Bangalore, India'},knowsLanguage:['en','bn'],knowsAbout:['Bengali cuisine','Recipe development','Food photography','Food video'],sameAs:[IGURL(),FBURL(),YTURL()]}}
-function homeLD(){return{'@type':'WebSite',name:'Antara',url:SITE.url?SITE.url+'/':undefined,inLanguage:'en-IN',publisher:{'@id':'#antara'}}}
+function personID(){return absURL('/')+'#antara'}
+function personLD(){return{'@type':'Person','@id':personID(),name:'Antara Roy Chowdhury',alternateName:['Antara','Artisan Antara'],jobTitle:'Food creator and recipe developer',description:SITE.tagline,url:absURL('/'),mainEntityOfPage:absURL('/about/'),image:typeof OG_IMAGES!=='undefined'?absURL(OG_IMAGES.portrait||OG_IMAGES.default)||undefined:undefined,
+ homeLocation:{'@type':'Place',name:'Bangalore, India'},knowsLanguage:['English','Bengali'],knowsAbout:['Bengali cuisine','Indian home cooking','Recipe development','Food photography','Food video','Culinary storytelling'],sameAs:[IGURL(),FBURL(),YTURL()]}}
+function homeLD(){return[{'@type':'WebSite','@id':absURL('/')+'#website',name:'Antara',alternateName:'Artisan Antara',url:absURL('/'),inLanguage:'en-IN',publisher:{'@id':personID()}},{'@type':'WebPage','@id':absURL('/')+'#webpage',url:absURL('/'),name:'Antara Roy Chowdhury — Bengali Food Creator, Bangalore',about:{'@id':personID()},isPartOf:{'@id':absURL('/')+'#website'},inLanguage:'en-IN'}]}
+function profileLD(){return{'@type':'ProfilePage','@id':absURL('/about/')+'#profile',url:absURL('/about/'),name:'About Antara Roy Chowdhury',mainEntity:{'@id':personID()},isPartOf:{'@id':absURL('/')+'#website'},inLanguage:'en-IN'}}
+function itemListLD(kind,items){return{'@type':'ItemList','@id':absURL('/'+kind+'/')+'#list',name:kind==='recipes'?'Recipes by Antara Roy Chowdhury':'Selected work by Antara Roy Chowdhury',numberOfItems:items.length,itemListElement:items.map((x,i)=>({'@type':'ListItem',position:i+1,url:absURL(`/${kind}/${x.slug}/`),name:x.title}))}}
+function servicesLD(){const sv=DB.services||SERVICES_DEFAULT;return{'@type':'Service','@id':absURL('/collaborate/')+'#services',name:'Food content and recipe development by Antara Roy Chowdhury',provider:{'@id':personID()},areaServed:{'@type':'Country',name:'India'},serviceType:['Recipe development','Food video','Food photography','Sponsored content'],hasOfferCatalog:{'@type':'OfferCatalog',name:'Creative services',itemListElement:sv.map(x=>({'@type':'Offer','itemOffered':{'@type':'Service',name:x.n,description:x.d}}))}}}
 const ISO_RX=/(\d+)\s*(h|hr|hrs|hour|hours|min|mins|minute|minutes)\b/gi;
 function isoDur(t){if(!t||t==='—')return undefined;let h=0,mi=0;String(t).replace(ISO_RX,(_,n,u)=>{if(/^h/i.test(u))h+=+n;else mi+=+n});return h||mi?`PT${h?h+'H':''}${mi?mi+'M':''}`:undefined}
-function recipeLD(r){const rv=r.reel?reelBy(r.reel):null,cover=typeof MEDIA_FILES!=='undefined'?absURL(MEDIA_FILES[r.reel]||''):'';
- return{'@type':'Recipe',name:r.title,description:r.excerpt,image:cover||undefined,author:{'@id':'#antara'},datePublished:new Date(r.date).toISOString().slice(0,10),
+function recipeLD(r){const rv=r.reel?reelBy(r.reel):null,cover=typeof MEDIA_FILES!=='undefined'?absURL(MEDIA_FILES[r.reel]||''):'',url=absURL(`/recipes/${r.slug}/`);
+ return{'@type':'Recipe','@id':url+'#recipe',url,mainEntityOfPage:url,name:r.title,description:r.excerpt,image:cover||undefined,author:{'@id':personID()},datePublished:new Date(r.date).toISOString().slice(0,10),inLanguage:'en-IN',
   prepTime:isoDur(r.prep),cookTime:isoDur(r.cook),recipeYield:r.serves&&r.serves!=='—'?r.serves:undefined,recipeCategory:r.cat,recipeCuisine:/Bengali/.test(r.cat)?'Bengali':'Indian',
   recipeIngredient:r.ingredients,recipeInstructions:r.steps.map(x=>({'@type':'HowToStep',text:x})),
   video:rv&&rv.c?{'@type':'VideoObject',name:r.title,description:r.excerpt,thumbnailUrl:cover||undefined,contentUrl:`https://www.instagram.com/reel/${r.reel}/`,embedUrl:`https://www.instagram.com/reel/${r.reel}/embed/`,uploadDate:rv.d,duration:rv.s?`PT${Math.floor(rv.s/60)}M${rv.s%60}S`:undefined}:undefined}}
 function pageHero(k,h,lead){return `<section class="page-hero"><div class="wrap">${kicker(k)}<h1><span class="lm"><span>${h}</span></span></h1>${lead?`<p class="lead" data-reveal>${lead}</p>`:''}</div></section>`}
 /* ---------- REELS PAGE ---------- */
 const RF={cat:'',q:'',sort:'new',n:24};
-function reelList(){let rs=visReels().filter(r=>!RF.cat||(RF.cat==='*'?r.b:r.g.includes(RF.cat)));
+function collabReels(){return visReels().filter(r=>r.b&&!HIDDEN_BRANDS.has(r.b))}
+function reelList(){let rs=collabReels().filter(r=>!RF.cat||RF.cat==='*'||r.g.includes(RF.cat));
  if(RF.q){const q=RF.q.toLowerCase();rs=rs.filter(r=>(r.t+' '+(HEALTH_BRANDS.includes(r.b)?'':r.cap)+' '+r.b).toLowerCase().includes(q))}
  return rs.sort((a,b)=>RF.sort==='top'?b.v-a.v:RF.sort==='old'?a.d.localeCompare(b.d):b.d.localeCompare(a.d))}
 function reelGridHTML(){const rs=reelList();if(!rs.length)return `<div class="empty" style="grid-column:1/-1">No reels match — try another dish or category.</div>`;
  return rs.slice(0,RF.n).map((r,i)=>reelCard(r,i)).join('')+(rs.length>RF.n?`<div class="more-wrap"><button class="btn" data-action="reel-more">Show more reels <span class="mono" style="color:inherit;margin-left:6px">${RF.n} of ${rs.length}</span></button></div>`:'')}
-function pageReels(){const st=reelStats();
- return pageHero('From Instagram','Straight from <em>the reel.</em>',`Antara's latest ${st.n} reels from ${esc(DB.settings.instagram)} — weeknight recipes, festival food and the odd peek behind the camera. Tap any reel to watch it and read the recipe.`)+`
- <section class="sec" style="padding-top:40px"><div class="wrap">${reelProof()}
- <div class="reel-tools"><div class="chips" role="group" aria-label="Filter reels">${RCATS.map(([l,k])=>{const c=k===''?visReels().length:k==='*'?visReels().filter(r=>r.b).length:visReels().filter(r=>r.g.includes(k)).length;return c?`<button class="chip ${RF.cat===k?'on':''}" data-action="reel-cat" data-k="${k}" aria-pressed="${RF.cat===k}">${l} <span class="cnt">${c}</span></button>`:''}).join('')}</div>
+function pageReels(){const rs=collabReels(),plays=rs.reduce((n,r)=>n+r.v,0);
+ return pageHero('Brand collaborations','Made with brands. <em>Made to matter.</em>',`${rs.length} disclosed brand collaborations from ${esc(DB.settings.instagram)}, created for food, kitchen and lifestyle partners. Tap a reel to watch the work and see its public performance.`)+`
+ <section class="sec" style="padding-top:40px"><div class="wrap">${reelProof(rs)}
+ <div class="collab-summary" data-reveal><span><b>${brandsWithReels().length}</b> brand partners</span><span><b>${rs.length}</b> collaboration reels</span><span><b>${fmtN(plays)}</b> public plays</span></div>
+ <div class="reel-tools"><div class="chips" role="group" aria-label="Filter collaborations">${RCATS.filter(([,k])=>k!=='*').map(([l,k])=>{const c=k===''?rs.length:rs.filter(r=>r.g.includes(k)).length;return c?`<button class="chip ${RF.cat===k?'on':''}" data-action="reel-cat" data-k="${k}" aria-pressed="${RF.cat===k}">${l} <span class="cnt">${c}</span></button>`:''}).join('')}</div>
  <div class="reel-search"><input type="search" placeholder="Search a dish, ingredient or brand…" value="${esc(RF.q)}" data-reel-q aria-label="Search reels"><select data-reel-sort aria-label="Sort reels"><option value="new" ${RF.sort==='new'?'selected':''}>Latest first</option><option value="top" ${RF.sort==='top'?'selected':''}>Most watched</option><option value="old" ${RF.sort==='old'?'selected':''}>Oldest first</option></select></div></div>
  <p class="mono" id="reel-count" aria-live="polite" style="margin:18px 0 0">${reelList().length} reels</p>
  <div class="reel-grid" id="reel-grid">${reelGridHTML()}</div></div></section>
@@ -603,7 +612,7 @@ function openReel(code,seq){const r=mediaBy(code);if(!r)return;const kind=r.k===
 function countUps(){if(reduced)return;const els=$$('[data-count]');if(!els.length)return;
  const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;o.unobserve(e.target);const el=e.target,end=+el.dataset.count,t0=performance.now();
   const tick=t=>{const k=Math.min((t-t0)/1400,1),v=end*(1-Math.pow(1-k,3));el.textContent=fmtN(Math.round(v));if(k<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}),{threshold:.6});els.forEach(e=>o.observe(e))}
-function pageAbout(){return pageHero('About','The cook behind the camera.','Antara is a Bengali food creator, recipe developer and culinary storyteller based in Bangalore — endlessly curious about why we cook what we cook.')+`
+function pageAbout(){return pageHero('About','The cook behind the camera.','Antara Roy Chowdhury, publishing as Artisan Antara, is a Bengali food creator, recipe developer and culinary storyteller based in Bangalore — endlessly curious about why we cook what we cook.')+`
  <section class="sec"><div class="wrap"><div class="abt-grid">
  <div class="abt-fig" data-mask>${img('portrait',800,1000,'Antara in a yellow silk saree, holding a brass plate of luchi and cholar dal')}</div>
  <div class="abt-txt" data-reveal><p class="dropcap" style="color:var(--ink2);font-size:1.05rem">I did not set out to be a food creator. I set out to keep recipes from disappearing — the kind that live in sound and smell, not in notebooks. Somewhere between the first photograph and the hundredth, that archival impulse turned into a practice: recipes, films and stories made with intention.</p>
@@ -621,6 +630,7 @@ function pageAbout(){return pageHero('About','The cook behind the camera.','Anta
  <div><dt>On Instagram</dt><dd><a href="${IGURL()}" target="_blank" rel="noopener">@${REEL_HANDLE}</a> — verified · ${PROFILE.followers.toLocaleString('en-IN')} followers · ${Math.floor(PROFILE.posts/10)*10}+ posts (as of ${fmtD(Date.parse(PROFILE.asOf))})</dd></div>
  <div><dt>Brand partners</dt><dd>${brandsWithReels().join(', ')}</dd></div>
  <div><dt>Works on</dt><dd>Recipe development, food video, food photography, styling, bilingual captions</dd></div></dl></div>
+ <div class="recipe-policy" id="recipe-notes" data-reveal><span class="mono">Recipe standards</span><h3>How recipes are developed</h3><p>Recipes are cooked in Antara’s home kitchen and written from the method shown in her original posts. Measurements, timings and yields are published only when they are available; missing details are never guessed.</p><p>Allergen notes are inferred from the listed ingredients and are guidance, not medical advice. Packaged-product labels can change, so readers should always check them. Corrections can be requested through the contact links on this site.</p></div>
  <div class="pull" data-reveal>“I would rather cook one honest dish than ten impressive ones.”</div>
  <div data-reveal style="text-align:center"><a class="btn solid" href="#/collaborate">Work With Me <span class="ar">→</span></a></div></div></section>`}
 function pageWorkDetailMedia(p,rel){const st=projStats(p),med=median(REELS.map(r=>r.v));
@@ -716,12 +726,19 @@ function pageRecipeDetail(slug){const r=DB.recipes.find(x=>x.slug===slug&&x.stat
  <div class="rd-right"><h2 style="font-size:1.6rem">Ingredients <span class="mono" style="font-size:11px">· tap to tick off</span></h2>
  <ul class="ings" role="group" aria-label="Ingredients checklist">${r.ingredients.map(i=>`<li data-action="tick-ing" role="checkbox" aria-checked="false" tabindex="0"><span class="box"></span>${esc(i)}</li>`).join('')}</ul>
  ${allergenNote(r)}<h2 style="font-size:1.6rem" id="method" tabindex="-1">Method</h2><ol class="steps">${r.steps.map(s=>`<li><p>${esc(s)}</p></li>`).join('')}</ol>
+ <aside class="recipe-trust"><span class="mono">Recipe provenance</span><h3>Cooked and documented by Antara Roy Chowdhury</h3><p>This recipe is based on Antara’s original kitchen notes and the linked cooking reel. Measurements, timings and yields appear only where they were recorded; allergen guidance is inferred from the ingredient list.</p><a class="tlink" href="/about/">Read the recipe standards →</a></aside>
  <p class="mono" style="margin-top:34px">Published ${fmtD(r.date)} · Antara’s kitchen notes</p></div></div>
  <div style="margin:70px 0 0">${kicker('Keep cooking')}<div class="rec-grid">${rel.map(rcard).join('')}</div></div>
  <div style="padding:60px 0 90px"><a class="btn" href="#/recipes">← All Recipes</a></div></div></section>`}
 function pageCollab(query){const sv=DB.services||SERVICES_DEFAULT,mk=query&&query.get('type')==='media-kit';
  const types=[...sv.map(x=>x.n),'Media kit request','Something else'];
- return pageHero('Collaborate','Your brand. A better story.',`For food, kitchen and lifestyle brands that want more than product placement: original recipes, considered storytelling and content people genuinely want to save and cook.<span class="page-hero-action"><a class="btn solid" href="#enquiry">Start an enquiry <span class="ar">→</span></a><a class="tlink" href="/collaborate/?type=media-kit#enquiry">Request the media kit</a></span>`)+`
+ return pageHero('Contact','Let’s start a conversation.',`Contact Antara for brand collaborations, recipe development, food films, media-kit requests and editorial opportunities.<span class="page-hero-action"><a class="btn solid" href="#enquiry">Send an enquiry <span class="ar">→</span></a></span>`)+`
+ <section class="contact-strip"><div class="wrap"><div class="contact-grid">
+ <a class="contact-card" href="${IGURL()}" target="_blank" rel="noopener"><span>Instagram</span><strong>${esc(DB.settings.instagram)}</strong><em>Message Antara ↗</em></a>
+ <a class="contact-card" href="${YTURL()}" target="_blank" rel="noopener"><span>YouTube</span><strong>@ArtisanAntara</strong><em>Visit channel ↗</em></a>
+ <a class="contact-card" href="${FBURL()}" target="_blank" rel="noopener"><span>Facebook</span><strong>Artisan Antara</strong><em>Visit profile ↗</em></a>
+ <div class="contact-card"><span>Based in</span><strong>${esc(DB.settings.location)}</strong><em>Available for projects across India</em></div>
+ </div></div></section>
  <section class="sec" style="padding-top:50px"><div class="wrap">${kicker('Services')}
  <p class="lead" data-reveal style="margin-top:14px">From one hero recipe to a season-long content partnership, every project begins with the audience, the cultural moment and the role the product can honestly play. Pricing is quoted per brief.</p>
  <div class="svc-pack">${sv.map((x,i)=>`<article class="pack" data-reveal><span class="n">${String(i+1).padStart(2,'0')}</span><h3>${esc(x.n)}</h3><p>${esc(x.d)}</p>
@@ -907,13 +924,14 @@ function showFieldError(i,bad){const id=(i.id||i.name)+'-err';let m=document.get
 function validateForm(f){let first=null;f.querySelectorAll('input:not(.hp):not([type=hidden]),select,textarea').forEach(i=>{const bad=!fieldValid(i);showFieldError(i,bad);if(bad&&!first)first=i});return first}
 document.addEventListener('input',e=>{const i=e.target;if(i.getAttribute&&i.getAttribute('aria-invalid')==='true'&&fieldValid(i))showFieldError(i,false)});
 document.addEventListener('change',e=>{const i=e.target;if(i.getAttribute&&i.getAttribute('aria-invalid')==='true'&&fieldValid(i))showFieldError(i,false)});
+document.addEventListener('focusout',e=>{const i=e.target;if(!i.matches?.('form[data-form] input:not(.hp):not([type=hidden]),form[data-form] select,form[data-form] textarea'))return;if(i.value||i.required)showFieldError(i,!fieldValid(i))});
 const FORM_LABEL={home:'Sunday Note (homepage)',pantry:'The Pantry waitlist',academy:'Kitchen Academy learning list'};
 async function deliverForm(subject,fields){const key=(DB.settings.formKey||'').trim();if(!key)return{ok:false,reason:'off'};
  try{const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({access_key:key,subject,from_name:'antara website',botcheck:false,...fields})});
   const j=await r.json().catch(()=>({}));return r.ok&&j.success?{ok:true}:{ok:false,reason:'error',msg:j.message||('Error '+r.status)}}catch(e){return{ok:false,reason:'network'}}}
 function briefText(fd){return ['Name: '+fd.get('name'),'Company: '+fd.get('company'),'Email: '+fd.get('email'),'Need: '+fd.get('type'),'Usage: '+fd.get('usage'),'Timeline: '+fd.get('timeline'),'Budget: '+fd.get('budget'),fd.get('link')?'Link: '+fd.get('link'):'','','Brief:',fd.get('brief')].filter(x=>x!==null).join('\n')}
 async function submitPublicForm(f,kind){const status=f.querySelector('[data-status]')||(()=>{const d=document.createElement('div');d.className='form-status';d.dataset.status='';f.appendChild(d);return d})();
- const bad=validateForm(f);if(bad){toast(kind==='enquiry'?'Please check the highlighted fields':'Please check the highlighted field','err');bad.focus();return}
+ const bad=validateForm(f);if(bad){status.className='form-status err';status.setAttribute('role','alert');status.setAttribute('tabindex','-1');status.innerHTML='<b>Please check the highlighted fields.</b> Each issue is explained beside the field.';toast(kind==='enquiry'?'Please check the highlighted fields':'Please check the highlighted field','err');status.focus();return}
  const fd=new FormData(f),btn=f.querySelector('button[type=submit]'),label=btn.innerHTML;
  const list=kind==='enquiry'?'':kind==='newsletter'?(f.dataset.src?FORM_LABEL[f.dataset.src]:'Sunday Note (footer)'):FORM_LABEL[f.dataset.src]||'Waitlist';
  const subject=kind==='enquiry'?`${fd.get('type')==='Media kit request'?'Media kit request':'New collaboration enquiry'} — ${fd.get('company')}`:`New sign-up — ${list}`;
