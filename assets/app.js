@@ -501,7 +501,7 @@ function recipeLD(r){const rv=r.reel?reelBy(r.reel):null,cover=typeof MEDIA_FILE
   prepTime:isoDur(r.prep),cookTime:isoDur(r.cook),recipeYield:r.serves&&r.serves!=='—'?r.serves:undefined,recipeCategory:r.cat,recipeCuisine:/Bengali/.test(r.cat)?'Bengali':'Indian',
   recipeIngredient:r.ingredients,recipeInstructions:r.steps.map(x=>({'@type':'HowToStep',text:x})),
   video:rv&&rv.c?{'@type':'VideoObject',name:r.title,description:r.excerpt,thumbnailUrl:cover||undefined,contentUrl:`https://www.instagram.com/reel/${r.reel}/`,embedUrl:`https://www.instagram.com/reel/${r.reel}/embed/`,uploadDate:rv.d,duration:rv.s?`PT${Math.floor(rv.s/60)}M${rv.s%60}S`:undefined}:undefined}}
-function pageHero(k,h,lead){return `<section class="page-hero"><div class="wrap">${kicker(k)}<h1><span class="lm"><span>${h}</span></span></h1>${lead?`<p class="lead" data-reveal>${lead}</p>`:''}</div></section>`}
+function pageHero(k,h,lead,extraClass=''){return `<section class="page-hero${extraClass?' '+extraClass:''}"><div class="wrap">${kicker(k)}<h1><span class="lm"><span>${h}</span></span></h1>${lead?`<p class="lead" data-reveal>${lead}</p>`:''}</div></section>`}
 /* ---------- REELS PAGE ---------- */
 const RF={cat:'',q:'',sort:'new',n:24};
 function collabReels(){return visReels().filter(r=>r.b&&!HIDDEN_BRANDS.has(r.b))}
@@ -612,7 +612,7 @@ function openReel(code,seq){const r=mediaBy(code);if(!r)return;const kind=r.k===
 function countUps(){if(reduced)return;const els=$$('[data-count]');if(!els.length)return;
  const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;o.unobserve(e.target);const el=e.target,end=+el.dataset.count,t0=performance.now();
   const tick=t=>{const k=Math.min((t-t0)/1400,1),v=end*(1-Math.pow(1-k,3));el.textContent=fmtN(Math.round(v));if(k<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}),{threshold:.6});els.forEach(e=>o.observe(e))}
-function pageAbout(){return pageHero('About','The cook behind the camera.','Antara Roy Chowdhury, publishing as Artisan Antara, is a Bengali food creator, recipe developer and culinary storyteller based in Bangalore — endlessly curious about why we cook what we cook.')+`
+function pageAbout(){return pageHero('About','The cook behind the camera.','Antara Roy Chowdhury, publishing as Artisan Antara, is a Bengali food creator, recipe developer and culinary storyteller based in Bangalore — endlessly curious about why we cook what we cook.','about-hero')+`
  <section class="sec"><div class="wrap"><div class="abt-grid">
  <div class="abt-fig" data-mask>${img('portrait',1024,1535,'Antara Roy Chowdhury in a professional kitchen, wearing a black chef apron')}</div>
  <div class="abt-txt" data-reveal><p class="dropcap" style="color:var(--ink2);font-size:1.05rem">I did not set out to be a food creator. I set out to keep recipes from disappearing — the kind that live in sound and smell, not in notebooks. Somewhere between the first photograph and the hundredth, that archival impulse turned into a practice: recipes, films and stories made with intention.</p>

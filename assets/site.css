@@ -259,6 +259,7 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 .page-hero h1{font-size:clamp(2.6rem,6.4vw,5.6rem);margin-top:24px;max-width:16ch}
 .page-hero .lead{margin-top:26px}
 /* about */
+.about-hero h1{max-width:none;white-space:nowrap;font-size:clamp(3rem,5.6vw,5.6rem);line-height:1.02}
 .abt-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(20px,3vw,48px)}
 .abt-fig{grid-column:1/6}.abt-fig img{width:100%;height:auto;aspect-ratio:auto;border-radius:var(--rad)}
 .abt-txt{grid-column:7/13}
@@ -931,6 +932,7 @@ h1,h2,h3{text-wrap:balance}
 @media(max-width:900px){
  .page-hero{padding-top:calc(var(--hdr) + 52px);padding-bottom:48px}
  .page-hero h1{font-size:clamp(2.7rem,9vw,4.9rem);line-height:1.02;max-width:12ch;margin-top:20px}
+ .about-hero h1{white-space:normal}
  .page-hero .lead{font-size:1.05rem;line-height:1.72;margin-top:22px;max-width:60ch}
  .svc-pack{grid-template-columns:1fr}
  .pack{padding:26px}
