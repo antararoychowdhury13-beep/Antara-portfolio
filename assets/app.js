@@ -357,10 +357,9 @@ function caseRow(p){return `<div class="case"><div class="ph" data-mask>${pimg(p
  <p style="margin-top:22px"><a class="tlink" href="#/work/${p.slug}">Read the case study <span>→</span></a></p></div></div>`}
 /* ---------- BRAND SHOWCASE ---------- */
 const BRAND_LINKS={Cookme:'pr_cookme',MasterChow:'pr_masterchow'};
-const WM_STYLE={MasterChow:'m2',KILRR:'m2',Cookme:'m2','Sandu Pharma':'m2',Bazana:'it',Carryhome:'it'};
 function brandMark(b,cls=''){const src=(DB.brandLogos||{})[b];
  return src?`<span class="bmark has-logo ${cls}"><img src="${esc(src)}" alt="${esc(b)}"></span>`
-  :`<span class="bmark ${cls}"><span class="wm ${WM_STYLE[b]||''}">${esc(b)}</span></span>`}
+  :`<span class="bmark ${cls}"><span class="wm">${esc(b)}</span></span>`}
 function brandData(){return DB.brands.filter(b=>!HIDDEN_BRANDS.has(b)).map(b=>{const rs=visReels().filter(r=>r.b===b),v=rs.reduce((a,r)=>a+r.v,0),top=rs.slice().sort((x,y)=>y.v-x.v)[0];
  const pid=BRAND_LINKS[b]||(rs.length?'pr_spotlights':'');const pj=DB.projects.find(p=>p.id===pid&&p.status==='published');
  return{b,rs,v,top,n:rs.length,href:pj?'#/work/'+pj.slug:(top?'':'#/collaborate'),code:top?.c}}).sort((a,b)=>b.v-a.v||b.n-a.n)}
