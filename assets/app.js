@@ -363,15 +363,13 @@ function brandMark(b,cls=''){const src=(DB.brandLogos||{})[b];
 function brandData(){return DB.brands.filter(b=>!HIDDEN_BRANDS.has(b)).map(b=>{const rs=visReels().filter(r=>r.b===b),v=rs.reduce((a,r)=>a+r.v,0),top=rs.slice().sort((x,y)=>y.v-x.v)[0];
  const pid=BRAND_LINKS[b]||(rs.length?'pr_spotlights':'');const pj=DB.projects.find(p=>p.id===pid&&p.status==='published');
  return{b,rs,v,top,n:rs.length,href:pj?'#/work/'+pj.slug:(top?'':'#/collaborate'),code:top?.c}}).sort((a,b)=>b.v-a.v||b.n-a.n)}
-function brandShowcase(){const bd=brandData();const lead=bd[0];
+function brandShowcase(){const bd=brandData();
  const tile=(d,i)=>{const tag=d.href?'a':'button';const attrs=d.href?`href="${d.href}"`:`data-action="reel-open" data-code="${d.code}"`;
-  return `<${tag} class="bt ${i===0&&d.n?'bt-lead':''}" ${attrs} style="--d:${(i%4)*.06}s" data-reveal aria-label="${esc(d.b)}${d.n?`: ${d.n} ${d.n>1?'reels':'reel'}, ${fmtN(d.v)} plays`:''}">
+  return `<${tag} class="bt" ${attrs} style="--d:${(i%4)*.06}s" data-reveal aria-label="${esc(d.b)}${d.n?`: ${d.n} ${d.n>1?'reels':'reel'}, ${fmtN(d.v)} plays`:''}">
   ${d.top?`<span class="bt-cover" aria-hidden="true"><img src="${REEL_COVERS[d.top.c]}" alt=""></span>`:''}
-  ${i===0&&d.n?`<span class="bt-tag">Lead partner</span>`:''}
   <span class="bt-mark">${brandMark(d.b)}</span>
-  ${i===0&&d.n>1?`<span class="bt-thumbs" aria-hidden="true">${d.rs.slice().sort((x,y)=>y.v-x.v).slice(0,4).map(r=>`<img src="${REEL_COVERS[r.c]}" alt="">`).join('')}</span>`:''}
   <span class="bt-meta">${d.n?`<b>${d.n} ${d.n>1?'reels':'reel'}</b><span>${fmtN(d.v)} plays</span>`:`<b>Partner</b><span>Collaboration</span>`}</span>${d.top?`<span class="bt-touch">Top reel: ${esc(d.top.t)}</span>`:''}
-  ${d.top?`<span class="bt-hover"><em>${i===0&&d.n?'Most-watched with '+esc(d.b):'Top reel'}</em><strong>${esc(d.top.t)}</strong><span>${d.href?'See the work →':'Watch the reel ▶'}</span></span>`:''}
+  ${d.top?`<span class="bt-hover"><em>Top reel</em><strong>${esc(d.top.t)}</strong><span>${d.href?'See the work →':'Watch the reel ▶'}</span></span>`:''}
   </${tag}>`};
  const marks=bd.map(d=>`<li>${brandMark(d.b,'mq')}</li>`).join('');
  return `<div class="bmarquee" data-reveal aria-label="Brands Antara has worked with"><ul class="bm-track">${marks}${marks.replace(/<li>/g,'<li aria-hidden="true">')}</ul></div>
